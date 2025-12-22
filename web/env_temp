@@ -1,0 +1,6 @@
+# Google AI (Gemini/Vertex)
+# Ensure you have enabled the Generative AI API in your Google Cloud Project
+GOOGLE_API_KEY=AIzaSyDIM0arMQZbkBF_iErhLf1HOsKH13ztcY8
+
+# SerpAPI (for Google Image Search)
+SERPAPI_API_KEY=263fd86af14041b618a1bac50f84c4c16d156c8ba582804522b78a5ab452b6d6
