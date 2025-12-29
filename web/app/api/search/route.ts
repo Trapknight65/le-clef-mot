@@ -1,33 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createOpenAI } from '@ai-sdk/openai';
+import { generateObject } from 'ai';
+import { z } from 'zod';
+
 const SerpApi = require('google-search-results-nodejs');
 
 /* 
  * API Route: /api/search
- * Handles the "Semantic Pivot" logic and data retrieval.
+ * Handles the "Semantic Pivot" logic and data retrieval using Groq (Mixtral).
  */
+
+// Define the schema for the output
+const searchSchema = z.object({
+    story: z.string().describe("Short 3-sentence narrative connecting modern word to root object."),
+    root: z.string().describe("The root object name"),
+    root_concept: z.string().describe("The concept (e.g. 'Examples: Coarse Wool, Mosquito Net')"),
+    visual_subject: z.string().describe("Precise description for an image search of the historical object"),
+    image_query: z.string().describe("Search query for archives, engravings or illustration of semantic pivot"),
+    scenes: z.array(z.object({
+        scene_index: z.number(),
+        prompt: z.string().describe("Visual description of scene")
+    }))
+});
+
+// Create Groq client
+const groq = createOpenAI({
+    baseURL: 'https://api.groq.com/openai/v1',
+    apiKey: process.env.GROQ_API_KEY,
+});
 
 const SYSTEM_PROMPT = `
 You are 'The Etymologist' & 'The Archivist'.
 For the given word, find its HISTORICAL ROOT OBJECT (The Semantic Pivot).
-Output JSON ONLY.
-
-Format:
-{
-  "story": "Short 3-sentence narrative connecting modern word to root object.",
-  "root": "The root object name",
-  "root_concept": "The concept (e.g. 'Examples: Coarse Wool, Mosquito Net')",
-  "visual_subject": "Precise description for an image search of the historical object",
-  "image_query": "Search query for archives, engravings or illustration of semantic pivot",
-  "scenes": [
-     {"scene_index": 0, "prompt": "Visual description of scene 1..."},
-     {"scene_index": 1, "prompt": "Visual description of scene 2..."},
-     {"scene_index": 2, "prompt": "Visual description of scene 3..."},
-     {"scene_index": 3, "prompt": "Visual description of scene 4..."},
-     {"scene_index": 4, "prompt": "Visual description of scene 5..."},
-     {"scene_index": 5, "prompt": "Visual description of scene 6..."}
-  ]
-}
 `;
 
 export async function POST(req: NextRequest) {
@@ -41,37 +45,31 @@ export async function POST(req: NextRequest) {
 
         console.log(`[API] Processing search for: ${word}`);
 
-        // 1. Generate Content (Story & Pivot) via Gemini
-        // If no key provided, fallback to mock to prevent app crash
+        // 1. Generate Content (Story & Pivot) via Groq
         let aiData;
-        if (process.env.GOOGLE_API_KEY) {
+        if (process.env.GROQ_API_KEY) {
             try {
-                const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-                // Updated to match available models for this key (Gemini 2.0 / 2.5)
-                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-                const result = await model.generateContent({
-                    contents: [{ role: "user", parts: [{ text: `Analyze the etymology of: "${word}"\n${SYSTEM_PROMPT}` }] }],
-                    generationConfig: { responseMimeType: "application/json" }
+                const { object } = await generateObject({
+                    model: groq('mixtral-8x7b-32768'),
+                    system: SYSTEM_PROMPT,
+                    prompt: `Analyze the etymology of: "${word}"`,
+                    schema: searchSchema,
                 });
-
-                aiData = JSON.parse(result.response.text());
+                aiData = object;
             } catch (e: any) {
-                console.error("Gemini API Error:", e);
-                // Fallback if API fails (429, 404, etc.)
+                console.error("Groq API Error:", e);
                 console.log("Falling back to Mock Data due to API Error.");
-                aiData = getMockData(word);
+                aiData = getMockData(word, e.message);
             }
         } else {
-            console.log("No GOOGLE_API_KEY found. Using mock data.");
-            aiData = getMockData(word);
+            console.log("No GROQ_API_KEY found. Using mock data.");
+            aiData = getMockData(word, "Missing GROQ_API_KEY");
         }
 
-        // 2. Fetch Real Image via SerpAPI
+        // 2. Fetch Real Image via SerpAPI (Unchanged)
         let imageUrl = "/placeholder_history.jpg";
         if (process.env.SERPAPI_API_KEY && aiData.image_query) {
             try {
-                // Wrap callback-based SerpAPI in Promise
                 const imageData: any = await new Promise((resolve, reject) => {
                     const search = new SerpApi.GoogleSearch(process.env.SERPAPI_API_KEY);
                     search.json({
@@ -100,10 +98,10 @@ export async function POST(req: NextRequest) {
             story: aiData.story,
             visual_subject: aiData.visual_subject,
             image_query: aiData.image_query,
-            image_url: imageUrl, // New Field
+            image_url: imageUrl,
             scenes: aiData.scenes.map((s: any) => ({
                 ...s,
-                video_uri: "" // Placeholder, as we don't have real Veo connected yet
+                video_uri: ""
             }))
         };
 
@@ -115,9 +113,9 @@ export async function POST(req: NextRequest) {
     }
 }
 
-function getMockData(word: string) {
+function getMockData(word: string, errorReason: string = "") {
     return {
-        story: `[MOCK] The word '${word}' comes from an ancient root. (Configure GOOGLE_API_KEY for real history).`,
+        story: `[MOCK] The word '${word}' comes from an ancient root. (Error: ${errorReason}) (Configure GROQ_API_KEY for real history).`,
         root: "Ancient Root",
         root_concept: "Historical Object",
         visual_subject: "A generic historical artifact",

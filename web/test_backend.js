@@ -38,15 +38,15 @@ async function testBackend() {
         console.error("❌ SerpAPI Failed:", e);
     }
 
-    // 3. Test Gemini 2.0 Flash Lite
-    console.log("\n--- Testing Gemini 2.0 Flash Lite ---");
+    // 3. Test Gemini 2.0 Flash Exp
+    console.log("\n--- Testing Gemini 2.0 Flash Exp ---");
     try {
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
         const result = await model.generateContent("Test.");
-        console.log(`✅ SUCCESS with gemini-2.0-flash-lite! Response: ${result.response.text()}`);
+        console.log(`✅ SUCCESS with gemini-2.0-flash-exp! Response: ${result.response.text()}`);
     } catch (e) {
-        console.error(`❌ Failed with gemini-2.0-flash-lite: ${e.status || e.message}`);
+        console.error(`❌ Failed with gemini-2.0-flash-exp: ${e.status || e.message}`);
     }
 
     // 4. List Generative AI Models
