@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import { z } from 'zod';
+import JSON5 from 'json5';
 
 /* 
  * API Route: /api/search
@@ -38,7 +39,10 @@ const SYSTEM_PROMPT = `
 You are a 'Visual Etymologist'. Do not write paragraphs.
 Analyze the word and output JSON.
 
-IMPORTANT: Ensure all arrays have commas between elements. Output ONLY the JSON object.
+IMPORTANT: 
+1. Ensure all arrays have commas between elements.
+2. ESCAPE ALL DOUBLE QUOTES inside strings (e.g., "The \"Word\"" not "The "Word"").
+3. Output ONLY the JSON object.
 
 Format:
 {
@@ -77,28 +81,27 @@ export async function POST(req: NextRequest) {
         let aiData;
         if (process.env.GROQ_API_KEY) {
             try {
+                // Top of file: import JSON5 from 'json5';
                 const { text } = await generateText({
                     model: groq('llama-3.3-70b-versatile'),
                     system: SYSTEM_PROMPT,
                     prompt: `Analyze the visual etymology of: "${word}"`,
+                    temperature: 0.5, // Lower temperature for more deterministic JSON
                 });
 
                 // Robust JSON Cleanup
-                // 1. Remove markdown code blocks
-                let cleanText = text.replace(/```json/g, '').replace(/```/g, '');
-                // 2. Trim whitespace
-                cleanText = cleanText.trim();
-                // 3. Extract pure JSON object if surrounded by text
+                let cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
                 const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
                 const jsonString = jsonMatch ? jsonMatch[0] : cleanText;
 
                 try {
-                    aiData = JSON.parse(jsonString);
+                    // Use JSON5 for relaxed parsing (trailing commas, unquoted keys, etc.)
+                    // Note: We need to require it if import fails, or assume import works.
+                    // Given ES module syntax in this file, import is improved.
+                    aiData = JSON5.parse(jsonString);
                 } catch (parseErr) {
-                    console.error("JSON Parse Error:", parseErr);
+                    console.error("JSON5 Parse Error:", parseErr);
                     console.log("Raw Text:", text);
-                    // Attempt simple repair for common comma issues (naive)
-                    // If this fails, we fall back to mock
                     throw parseErr;
                 }
 
