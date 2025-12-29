@@ -1,25 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
-import { generateObject } from 'ai';
+import { generateText } from 'ai';
 import { z } from 'zod';
 
 const SerpApi = require('google-search-results-nodejs');
 
 /* 
  * API Route: /api/search
- * Handles the "Semantic Pivot" logic and data retrieval using Groq (Mixtral).
+ * Handles the "Semantic Pivot" logic and data retrieval using Groq (Llama 3.3).
  */
 
-// Define the schema for the output
+// Define the schema for reference/validation (optional usage here)
 const searchSchema = z.object({
-    story: z.string().describe("Short 3-sentence narrative connecting modern word to root object."),
-    root: z.string().describe("The root object name"),
-    root_concept: z.string().describe("The concept (e.g. 'Examples: Coarse Wool, Mosquito Net')"),
-    visual_subject: z.string().describe("Precise description for an image search of the historical object"),
-    image_query: z.string().describe("Search query for archives, engravings or illustration of semantic pivot"),
+    story: z.string(),
+    root: z.string(),
+    root_concept: z.string(),
+    visual_subject: z.string(),
+    image_query: z.string(),
     scenes: z.array(z.object({
         scene_index: z.number(),
-        prompt: z.string().describe("Visual description of scene")
+        prompt: z.string()
     }))
 });
 
@@ -32,6 +32,20 @@ const groq = createOpenAI({
 const SYSTEM_PROMPT = `
 You are 'The Etymologist' & 'The Archivist'.
 For the given word, find its HISTORICAL ROOT OBJECT (The Semantic Pivot).
+Output valid JSON only.
+
+Format:
+{
+  "story": "Short 3-sentence narrative connecting modern word to root object.",
+  "root": "The root object name",
+  "root_concept": "The concept (e.g. 'Examples: Coarse Wool, Mosquito Net')",
+  "visual_subject": "Precise description for an image search of the historical object",
+  "image_query": "Search query for archives, engravings or illustration of semantic pivot",
+  "scenes": [
+     {"scene_index": 0, "prompt": "Visual description of scene 1..."},
+     {"scene_index": 1, "prompt": "Visual description of scene 2..."}
+  ]
+}
 `;
 
 export async function POST(req: NextRequest) {
@@ -45,17 +59,21 @@ export async function POST(req: NextRequest) {
 
         console.log(`[API] Processing search for: ${word}`);
 
-        // 1. Generate Content (Story & Pivot) via Groq
+        // 1. Generate Content via Groq
         let aiData;
         if (process.env.GROQ_API_KEY) {
             try {
-                const { object } = await generateObject({
+                const { text } = await generateText({
                     model: groq('llama-3.3-70b-versatile'),
                     system: SYSTEM_PROMPT,
                     prompt: `Analyze the etymology of: "${word}"`,
-                    schema: searchSchema,
                 });
-                aiData = object;
+
+                // Extract JSON from potential markdown code blocks
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                const jsonString = jsonMatch ? jsonMatch[0] : text;
+                aiData = JSON.parse(jsonString);
+
             } catch (e: any) {
                 console.error("Groq API Error:", e);
                 console.log("Falling back to Mock Data due to API Error.");
