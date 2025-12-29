@@ -106,14 +106,14 @@ export default function TriptychDisplay() {
             <div className="fixed inset-0 pointer-events-none opacity-20 bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')]"></div>
 
             {/*-- HERO / SEARCH SECTION --*/}
-            <div className={`transition-all duration-1000 ease-in-out ${data ? 'h-24 sticky top-0 z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-800' : 'h-screen flex items-center justify-center'}`}>
+            <div className={`transition-all duration-500 ease-in-out ${data ? 'h-24 sticky top-0 z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-800' : 'h-screen flex items-center justify-center'}`}>
                 <div className={`w-full max-w-4xl mx-auto px-6 flex ${data ? 'flex-row items-center justify-between' : 'flex-col items-center gap-8'}`}>
 
-                    <h1 className={`font-serif text-amber-500 tracking-tight transition-all duration-700 ${data ? 'text-2xl' : 'text-5xl md:text-7xl'}`}>
+                    <h1 className={`font-serif text-amber-500 tracking-tight transition-all duration-300 ${data ? 'text-2xl' : 'text-5xl md:text-7xl'}`}>
                         Le Mot Clef
                     </h1>
 
-                    <div className={`relative transition-all duration-700 ${data ? 'w-full max-w-md ml-8' : 'w-full max-w-xl'}`}>
+                    <div className={`relative transition-all duration-300 ${data ? 'w-full max-w-md ml-8' : 'w-full max-w-xl'}`}>
                         <input
                             type="text"
                             value={searchTerm}
@@ -241,6 +241,11 @@ export default function TriptychDisplay() {
                                                 <img
                                                     src={data.image_url}
                                                     alt={data.visual_subject}
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        target.onerror = null;
+                                                        target.src = "/placeholder_history.jpg";
+                                                    }}
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
                                                 />
                                             ) : (
