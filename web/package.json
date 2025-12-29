@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.1",
-    "@fal-ai/serverless-client": "^0.15.0",
+    "@fal-ai/client": "^1.8.1",
     "ai": "^6.0.3",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.23.26",

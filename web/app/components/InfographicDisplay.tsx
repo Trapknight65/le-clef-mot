@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { EtymologyData } from './TriptychDisplay';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as fal from "@fal-ai/serverless-client";
+import * as fal from "@fal-ai/client";
 
 // Configure Fal to use our proxy
 fal.config({

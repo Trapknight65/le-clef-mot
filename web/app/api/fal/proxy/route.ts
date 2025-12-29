@@ -1,4 +1,4 @@
-import { route } from "@fal-ai/serverless-client/nextjs";
+import { route } from "@fal-ai/client/nextjs";
 
 export const GET = route.GET;
 export const POST = route.POST;
