@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         if (process.env.GROQ_API_KEY) {
             try {
                 const { object } = await generateObject({
-                    model: groq('mixtral-8x7b-32768'),
+                    model: groq('llama-3.3-70b-versatile'),
                     system: SYSTEM_PROMPT,
                     prompt: `Analyze the etymology of: "${word}"`,
                     schema: searchSchema,
