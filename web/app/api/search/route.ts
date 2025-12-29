@@ -3,20 +3,25 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import { z } from 'zod';
 
-const SerpApi = require('google-search-results-nodejs');
-
 /* 
  * API Route: /api/search
  * Handles the "Semantic Pivot" logic and data retrieval using Groq (Llama 3.3).
+ * Generates visuals using Fal.ai (Flux).
  */
 
 // Define the schema for reference/validation (optional usage here)
 const searchSchema = z.object({
+    breakdown: z.array(z.object({
+        part: z.string(),
+        meaning: z.string(),
+        color: z.enum(['red', 'blue', 'green', 'yellow']).optional()
+    })),
+    literal_meaning: z.string(),
+    mnemonic: z.string(),
+    visual_contrast_prompt: z.string(),
     story: z.string(),
     root: z.string(),
     root_concept: z.string(),
-    visual_subject: z.string(),
-    image_query: z.string(),
     scenes: z.array(z.object({
         scene_index: z.number(),
         prompt: z.string()
@@ -30,22 +35,31 @@ const groq = createOpenAI({
 });
 
 const SYSTEM_PROMPT = `
-You are 'The Etymologist' & 'The Archivist'.
-For the given word, find its HISTORICAL ROOT OBJECT (The Semantic Pivot).
-Output valid JSON only.
+You are a 'Visual Etymologist'. Do not write paragraphs.
+Analyze the word and output JSON.
+
+IMPORTANT: Ensure all arrays have commas between elements. Output ONLY the JSON object.
 
 Format:
 {
-  "story": "Short 3-sentence narrative connecting modern word to root object.",
-  "root": "The root object name",
-  "root_concept": "The concept (e.g. 'Examples: Coarse Wool, Mosquito Net')",
-  "visual_subject": "Precise description for an image search of the historical object",
-  "image_query": "Search query for archives, engravings or illustration of semantic pivot",
+  "breakdown": [
+    { "part": "Co", "meaning": "With", "color": "red" },
+    { "part": "Pain", "meaning": "Bread", "color": "blue" }
+  ],
+  "literal_meaning": "With Bread",
+  "mnemonic": "Someone you break bread with.",
+  "visual_contrast_prompt": "Close up of a medieval monk writing on a table covered by a thick layout cloth.",
+  "video_prompt": "Slow pan, cinematic lighting, dust particles floating, the monk is writing smoothly.",
+  "story": "Three sentences narrative.",
+  "root": "Compain",
+  "root_concept": "Bread Sharer",
   "scenes": [
-     {"scene_index": 0, "prompt": "Visual description of scene 1..."},
-     {"scene_index": 1, "prompt": "Visual description of scene 2..."}
+     {"scene_index": 0, "prompt": "Scene description..."},
+     {"scene_index": 1, "prompt": "Scene description..."}
   ]
 }
+
+Analyze the word and output JSON:
 `;
 
 export async function POST(req: NextRequest) {
@@ -66,13 +80,27 @@ export async function POST(req: NextRequest) {
                 const { text } = await generateText({
                     model: groq('llama-3.3-70b-versatile'),
                     system: SYSTEM_PROMPT,
-                    prompt: `Analyze the etymology of: "${word}"`,
+                    prompt: `Analyze the visual etymology of: "${word}"`,
                 });
 
-                // Extract JSON from potential markdown code blocks
-                const jsonMatch = text.match(/\{[\s\S]*\}/);
-                const jsonString = jsonMatch ? jsonMatch[0] : text;
-                aiData = JSON.parse(jsonString);
+                // Robust JSON Cleanup
+                // 1. Remove markdown code blocks
+                let cleanText = text.replace(/```json/g, '').replace(/```/g, '');
+                // 2. Trim whitespace
+                cleanText = cleanText.trim();
+                // 3. Extract pure JSON object if surrounded by text
+                const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+                const jsonString = jsonMatch ? jsonMatch[0] : cleanText;
+
+                try {
+                    aiData = JSON.parse(jsonString);
+                } catch (parseErr) {
+                    console.error("JSON Parse Error:", parseErr);
+                    console.log("Raw Text:", text);
+                    // Attempt simple repair for common comma issues (naive)
+                    // If this fails, we fall back to mock
+                    throw parseErr;
+                }
 
             } catch (e: any) {
                 console.error("Groq API Error:", e);
@@ -84,40 +112,54 @@ export async function POST(req: NextRequest) {
             aiData = getMockData(word, "Missing GROQ_API_KEY");
         }
 
-        // 2. Fetch Real Image via SerpAPI (Unchanged)
+        // 2. Generate Image via Fal.ai (Flux Schnell)
         let imageUrl = "/placeholder_history.jpg";
-        if (process.env.SERPAPI_API_KEY && aiData.image_query) {
+        const imagePrompt = `Historical illustration, ${aiData.visual_contrast_prompt || aiData.root_concept}, engraving style, detailed`;
+
+        if (process.env.FAL_KEY) {
             try {
-                const imageData: any = await new Promise((resolve, reject) => {
-                    const search = new SerpApi.GoogleSearch(process.env.SERPAPI_API_KEY);
-                    search.json({
-                        engine: "google_images",
-                        q: aiData.image_query,
-                        num: 1
-                    }, (json: any) => {
-                        if (json.error) reject(json.error);
-                        else resolve(json);
-                    });
+                console.log("Generating image with Fal.ai...");
+                const falResponse = await fetch("https://fal.run/fal-ai/flux/schnell", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Key ${process.env.FAL_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        prompt: imagePrompt,
+                        image_size: "landscape_4_3",
+                        num_inference_steps: 4,
+                        enable_safety_checker: true
+                    })
                 });
 
-                if (imageData.images_results && imageData.images_results.length > 0) {
-                    imageUrl = imageData.images_results[0].original;
+                if (falResponse.ok) {
+                    const falData = await falResponse.json();
+                    if (falData.images && falData.images.length > 0) {
+                        imageUrl = falData.images[0].url;
+                    }
+                } else {
+                    console.error("Fal.ai Error:", await falResponse.text());
                 }
             } catch (e) {
-                console.error("SerpAPI Error:", e);
+                console.error("Fal.ai Exception:", e);
             }
         }
 
         // 3. Assemble Response
         const responseData = {
             word: word,
+            breakdown: aiData.breakdown || [],
+            literal_meaning: aiData.literal_meaning || "Unknown",
+            mnemonic: aiData.mnemonic || "",
             root: aiData.root,
             root_concept: aiData.root_concept,
             story: aiData.story,
-            visual_subject: aiData.visual_subject,
-            image_query: aiData.image_query,
+            visual_subject: aiData.visual_contrast_prompt,
+            video_prompt: aiData.video_prompt,
+            image_query: imagePrompt,
             image_url: imageUrl,
-            scenes: aiData.scenes.map((s: any) => ({
+            scenes: (aiData.scenes || []).map((s: any) => ({
                 ...s,
                 video_uri: ""
             }))
@@ -133,11 +175,13 @@ export async function POST(req: NextRequest) {
 
 function getMockData(word: string, errorReason: string = "") {
     return {
-        story: `[MOCK] The word '${word}' comes from an ancient root. (Error: ${errorReason}) (Configure GROQ_API_KEY for real history).`,
+        breakdown: [{ part: word.substring(0, 3), meaning: "First part", color: "red" }, { part: word.substring(3), meaning: "Second part", color: "blue" }],
+        literal_meaning: "Mock Translation",
+        mnemonic: "Mock Mnemonic: This is a placeholder.",
+        visual_contrast_prompt: `Historical ${word} object`,
+        story: `[MOCK] The word '${word}' history placeholder. (Error: ${errorReason})`,
         root: "Ancient Root",
         root_concept: "Historical Object",
-        visual_subject: "A generic historical artifact",
-        image_query: `authentic historical ${word} artifact museum`,
         scenes: Array(6).fill(null).map((_, i) => ({ scene_index: i, prompt: `Scene ${i}` }))
     };
 }

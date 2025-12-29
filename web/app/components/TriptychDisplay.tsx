@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { BookOpen, History, Play, Pause, Search, ArrowRight, X } from 'lucide-react';
+import { BookOpen, History, Play, Search, ArrowRight, X } from 'lucide-react';
 
 /* Types for the Data Structure */
 interface Scene {
@@ -12,12 +12,15 @@ interface Scene {
 
 export interface EtymologyData {
     word: string;
+    breakdown: { part: string; meaning: string; color: string }[];
+    literal_meaning: string;
+    mnemonic: string;
     root: string;
     root_concept: string;
     story: string;
     visual_subject: string;
     image_query: string;
-    image_url?: string; // New field from SerpAPI
+    image_url?: string;
     scenes: Scene[];
 }
 
@@ -60,6 +63,26 @@ export default function TriptychDisplay() {
         }
     };
 
+    const getColorClass = (color: string) => {
+        switch (color) {
+            case 'red': return 'text-rose-500';
+            case 'blue': return 'text-sky-500';
+            case 'green': return 'text-emerald-500';
+            case 'yellow': return 'text-amber-500';
+            default: return 'text-stone-300';
+        }
+    };
+
+    const getBgColorClass = (color: string) => {
+        switch (color) {
+            case 'red': return 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+            case 'blue': return 'bg-sky-500/20 text-sky-300 border-sky-500/30';
+            case 'green': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+            case 'yellow': return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+            default: return 'bg-stone-800 text-stone-300 border-stone-700';
+        }
+    };
+
     return (
         <div className="min-h-screen bg-stone-950 text-stone-100 font-sans selection:bg-amber-900 selection:text-white">
             {/* Background Ambience */}
@@ -98,9 +121,6 @@ export default function TriptychDisplay() {
             {data && (
                 <main className="max-w-[1600px] mx-auto p-6 h-[calc(100vh-6rem)] relative z-0">
 
-                    {/* View Switcher - Always visible in headers for Desktop, or floating for Mobile? 
-                        Let's put it top-right relative to main container for now. 
-                    */}
                     <div className="absolute top-0 right-6 z-50 flex gap-2">
                         <div className="bg-stone-900 rounded-full p-1 border border-stone-800 flex shadow-lg">
                             <button
@@ -145,31 +165,42 @@ export default function TriptychDisplay() {
                                         <h2 className="uppercase tracking-widest text-xs font-bold">L'Étymologiste</h2>
                                     </div>
 
-                                    <h3 className="font-serif text-3xl md:text-4xl text-stone-100 mb-6 leading-tight">
-                                        The hidden history of <span className="text-amber-500 italic">{data.word}</span>
-                                    </h3>
+                                    {/* BIONIC ETYMOLOGY DISPLAY */}
+                                    <div className="mb-8 p-6 bg-stone-950 border border-stone-800 rounded-lg shadow-inner">
+                                        <div className="flex flex-wrap items-baseline gap-1 mb-4">
+                                            {data.breakdown && data.breakdown.length > 0 ? (
+                                                data.breakdown.map((part, idx) => (
+                                                    <span key={idx} className={`text-4xl md:text-5xl font-black tracking-tight ${getColorClass(part.color)}`}>
+                                                        {part.part}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-4xl md:text-5xl font-black text-stone-100">{data.word}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2 mb-6">
+                                            {data.breakdown && data.breakdown.map((part, idx) => (
+                                                <div key={idx} className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider border ${getBgColorClass(part.color)}`}>
+                                                    {part.meaning}
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="border-t border-stone-800 pt-4">
+                                            <p className="text-stone-500 text-xs uppercase tracking-widest mb-1">Literal Meaning</p>
+                                            <p className="text-xl font-serif italic text-stone-300">"{data.literal_meaning}"</p>
+                                        </div>
+                                    </div>
+
+                                    {/* MNEMONIC CARD */}
+                                    <div className="mb-8 p-4 bg-amber-900/20 border border-amber-700/30 rounded-lg">
+                                        <p className="text-amber-500 text-xs uppercase tracking-wider font-bold mb-2">🧠 Visual Mnemonic</p>
+                                        <p className="text-lg font-medium text-amber-200">"{data.mnemonic}"</p>
+                                    </div>
 
                                     <div className="prose prose-invert prose-lg text-stone-300 font-serif leading-relaxed">
                                         <p>{data.story}</p>
-                                        <p className="mt-4">
-                                            We often forget that abstract words started as concrete objects.
-                                            Before it was a concept, it was something you could touch, hold, or use.
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-12 p-6 bg-stone-950/50 rounded-lg border border-stone-800/50">
-                                        <h4 className="text-stone-500 text-xs uppercase tracking-wider mb-2">Semantic Pivot</h4>
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex justify-between items-center border-b border-stone-800 pb-2">
-                                                <span className="text-stone-400">Target</span>
-                                                <span className="font-serif text-xl">{data.word}</span>
-                                            </div>
-                                            <div className="flex justify-center text-amber-700 py-1">↓</div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-stone-400">Roots</span>
-                                                <span className="font-serif text-xl text-amber-200">{data.root}</span>
-                                            </div>
-                                        </div>
                                     </div>
                                 </section>
 
@@ -181,24 +212,33 @@ export default function TriptychDisplay() {
                                     </div>
 
                                     <div className="flex-grow flex flex-col items-center justify-center gap-4 text-center">
-                                        <div className="w-full aspect-[4/5] bg-stone-800 rounded-lg overflow-hidden relative group">
+                                        {/* Visual Contrast / Root Image */}
+                                        <div className="w-full aspect-[4/5] bg-stone-800 rounded-lg overflow-hidden relative group shadow-2xl border border-stone-700">
                                             {/* Real Historical Image */}
                                             {data.image_url ? (
                                                 <img
                                                     src={data.image_url}
                                                     alt={data.visual_subject}
-                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
                                                 />
                                             ) : (
                                                 <div className="absolute inset-0 flex items-center justify-center text-stone-600 bg-stone-900">
                                                     <span className="italic">No image found for {data.root}</span>
                                                 </div>
                                             )}
+
                                             {/* Overlay Info */}
-                                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                                                <p className="text-white font-serif text-lg">{data.visual_subject}</p>
-                                                <p className="text-stone-400 text-xs font-mono">{data.image_query}</p>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+
+                                            <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
+                                                <p className="text-stone-400 text-xs uppercase tracking-wider mb-1">The origin</p>
+                                                <p className="text-white font-serif text-2xl leading-none mb-2">{data.root}</p>
+                                                <p className="text-stone-300 text-sm italic">{data.visual_subject}</p>
                                             </div>
+                                        </div>
+
+                                        <div className="mt-4 text-sm text-stone-500 max-w-xs">
+                                            <p>This is the physical object that gave birth to the abstract word <span className="text-stone-300">{data.word}</span>.</p>
                                         </div>
                                     </div>
                                 </section>
