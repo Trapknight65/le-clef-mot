@@ -13,6 +13,8 @@
     "@fal-ai/client": "^1.8.1",
     "ai": "^6.0.3",
     "dotenv": "^17.2.3",
+    "firebase": "^12.7.0",
+    "firebase-admin": "^13.6.0",
     "framer-motion": "^12.23.26",
     "google-search-results-nodejs": "^2.1.0",
     "lucide-react": "^0.562.0",

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { BookOpen, History, Play, Search, ArrowRight, X } from 'lucide-react';
+import { getCachedWord, saveWordToCache } from '@/lib/store';
 
 /* Types for the Data Structure */
 interface Scene {
@@ -19,6 +20,8 @@ export interface EtymologyData {
     root_concept: string;
     story: string;
     visual_subject: string;
+    video_prompt?: string;
+    video_url?: string;
     image_query: string;
     image_url?: string;
     scenes: Scene[];
@@ -34,30 +37,44 @@ export default function TriptychDisplay() {
     const [viewMode, setViewMode] = useState<'triptych' | 'infographic'>('triptych');
     const [activeTab, setActiveTab] = useState<'story' | 'history' | 'studio'>('story'); // Mobile Tab State
 
-    const handleSearch = async () => {
-        if (!searchTerm) return;
+    const handleSearch = async (term: string) => {
+        if (!term) return;
         setLoading(true);
         setError(null);
-        setData(null); // Clear previous results
+        setSearchTerm(term); // Update search term
+        setData(null); // Clear previous data
 
         try {
+            // 1. Check Cache
+            const cached = await getCachedWord(term);
+            if (cached) {
+                setData(cached.etymology);
+                setLoading(false);
+                return;
+            }
+
+            // 2. Cache Miss - Call API
             const response = await fetch('/api/search', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ word: searchTerm }),
+                body: JSON.stringify({ word: term }),
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                throw new Error('Failed to fetch etymology data');
             }
 
             const result = await response.json();
-            setData(result);
-        } catch (err: any) {
-            console.error("Search failed:", err);
-            setError(err.message || "Failed to fetch data.");
+
+            // 3. Save to Cache
+            if (result) {
+                setData(result);
+                saveWordToCache(term, result);
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setLoading(false);
         }
@@ -101,12 +118,12 @@ export default function TriptychDisplay() {
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
                             placeholder="Enter a word (e.g. Bureau, Canapé)..."
                             className="w-full bg-stone-900/50 border border-stone-700 rounded-full px-6 py-4 text-stone-200 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600 transition-all font-serif placeholder:italic placeholder:text-stone-600"
                         />
                         <button
-                            onClick={handleSearch}
+                            onClick={() => handleSearch(searchTerm)}
                             disabled={loading}
                             className="absolute right-2 top-2 bg-amber-700 hover:bg-amber-600 text-stone-100 p-2 rounded-full transition-colors disabled:opacity-50"
                         >

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as fal from "@fal-ai/client";
+import { fal } from "@fal-ai/client";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { prompt, image_url } = body;
+        const { prompt, image_url, word } = body; // Read word for path
 
         if (!prompt || !image_url) {
             return NextResponse.json({ error: "Missing prompt or image_url" }, { status: 400 });

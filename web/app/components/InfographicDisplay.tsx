@@ -6,16 +6,20 @@ interface InfographicDisplayProps {
     data: EtymologyData & { video_prompt?: string };
 }
 
+import { updateWordAsset } from '@/lib/store';
 export default function InfographicDisplay({ data }: InfographicDisplayProps) {
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [videoUrl, setVideoUrl] = useState<string | null>(data.video_url || null); // Check data first
     const [isGenerating, setIsGenerating] = useState(false);
 
     useEffect(() => {
         // Reset video state when data changes
-        setVideoUrl(null);
+        setVideoUrl(data.video_url || null);
         setIsGenerating(false);
 
         const generateVideo = async () => {
+            // If we already have a video (cached), skip generation
+            if (data.video_url) return;
+
             if (!data.image_url || !data.video_prompt || data.image_url.includes('placeholder')) return;
 
             setIsGenerating(true);
@@ -27,7 +31,8 @@ export default function InfographicDisplay({ data }: InfographicDisplayProps) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         prompt: data.video_prompt + ", cinematic, high quality, 4k",
-                        image_url: data.image_url
+                        image_url: data.image_url,
+                        word: data.word
                     })
                 });
 
@@ -36,6 +41,8 @@ export default function InfographicDisplay({ data }: InfographicDisplayProps) {
                     if (result.video_url) {
                         console.log("Living Archive Ready:", result.video_url);
                         setVideoUrl(result.video_url);
+                        // Save the asset to cache
+                        updateWordAsset(data.word, 'video_url', result.video_url);
                     }
                 } else {
                     console.error("Video Gen Error:", await response.text());
@@ -50,7 +57,7 @@ export default function InfographicDisplay({ data }: InfographicDisplayProps) {
 
         // Start generation
         generateVideo();
-    }, [data.word, data.image_url, data.video_prompt]);
+    }, [data.word, data.image_url, data.video_prompt, data.video_url]);
 
     return (
         <div className="w-full h-full flex justify-center p-4 md:p-8 bg-stone-900 overflow-y-auto">
