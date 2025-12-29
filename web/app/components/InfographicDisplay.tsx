@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { EtymologyData } from './TriptychDisplay';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as fal from "@fal-ai/client";
-
-// Configure Fal to use our proxy
-fal.config({
-    proxyUrl: "/api/fal/proxy",
-});
 
 interface InfographicDisplayProps {
     data: EtymologyData & { video_prompt?: string };
@@ -27,23 +21,26 @@ export default function InfographicDisplay({ data }: InfographicDisplayProps) {
             setIsGenerating(true);
             try {
                 console.log("Starting Living Archive generation...", data.video_prompt);
-                const result: any = await fal.subscribe("fal-ai/minimax/video-01/image-to-video", {
-                    input: {
+
+                const response = await fetch('/api/animate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
                         prompt: data.video_prompt + ", cinematic, high quality, 4k",
-                        image_url: data.image_url,
-                    },
-                    logs: true,
-                    onQueueUpdate: (update) => {
-                        if (update.status === 'IN_PROGRESS') {
-                            update.logs.map((log) => log.message).forEach(console.log);
-                        }
-                    },
+                        image_url: data.image_url
+                    })
                 });
 
-                if (result && result.video && result.video.url) {
-                    console.log("Living Archive Ready:", result.video.url);
-                    setVideoUrl(result.video.url);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.video_url) {
+                        console.log("Living Archive Ready:", result.video_url);
+                        setVideoUrl(result.video_url);
+                    }
+                } else {
+                    console.error("Video Gen Error:", await response.text());
                 }
+
             } catch (error) {
                 console.error("Error generating video:", error);
             } finally {
