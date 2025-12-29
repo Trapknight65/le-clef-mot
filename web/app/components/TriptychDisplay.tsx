@@ -136,7 +136,7 @@ export default function TriptychDisplay() {
 
             {/*-- MAIN CONTENT TRIPTYCH or INFOGRAPHIC --*/}
             {data && (
-                <main className="max-w-[1600px] mx-auto p-6 h-[calc(100vh-6rem)] relative z-0">
+                <main className="max-w-[1600px] mx-auto p-4 md:p-6 h-[calc(100dvh-8rem)] md:h-[calc(100vh-6rem)] relative z-0 flex flex-col">
 
                     <div className="absolute top-0 right-6 z-50 flex gap-2">
                         <div className="bg-stone-900 rounded-full p-1 border border-stone-800 flex shadow-lg">
@@ -161,23 +161,28 @@ export default function TriptychDisplay() {
                         </div>
                     ) : (
                         <>
-                            {/* Mobile Tabs */}
-                            <div className="md:hidden flex gap-4 mb-6 border-b border-stone-800 pb-2">
+                            {/* Mobile Tabs (Segmented Control) */}
+                            <div className="md:hidden flex mb-4 mx-auto bg-stone-900/80 p-1 rounded-xl border border-stone-800 w-full max-w-sm sticky top-0 z-40 backdrop-blur-md">
                                 {['story', 'history', 'studio'].map((tab) => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab as any)}
-                                        className={`uppercase tracking-widest text-xs font-bold pb-2 ${activeTab === tab ? 'text-amber-500 border-b-2 border-amber-500' : 'text-stone-500'}`}
+                                        className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all ${activeTab === tab
+                                            ? 'bg-amber-700 text-stone-100 shadow-md transform scale-105'
+                                            : 'text-stone-500 hover:text-stone-300'
+                                            }`}
                                     >
-                                        {tab}
+                                        {tab === 'story' && 'Étymo'}
+                                        {tab === 'history' && 'Archive'}
+                                        {tab === 'studio' && 'Studio'}
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full pt-12">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full content-start md:content-stretch">
                                 {/* PANEL 1: THE NARRATIVE (Clédor) */}
-                                <section className={`bg-stone-900/40 border border-stone-800 rounded-xl p-8 overflow-y-auto ${activeTab === 'story' ? 'block' : 'hidden md:block'}`}>
-                                    <div className="flex items-center gap-3 mb-6 text-amber-600">
+                                <section className={`bg-stone-900/40 border border-stone-800 rounded-xl p-6 md:p-8 overflow-y-auto custom-scrollbar h-full ${activeTab === 'story' ? 'block' : 'hidden md:block'}`}>
+                                    <div className="flex items-center gap-3 mb-6 text-amber-600 sticky top-0 bg-stone-900/95 p-2 -m-2 z-10 md:static md:bg-transparent md:p-0 md:m-0 backdrop-blur-sm md:backdrop-blur-none rounded-lg md:rounded-none border-b border-stone-800 md:border-none">
                                         <BookOpen size={20} />
                                         <h2 className="uppercase tracking-widest text-xs font-bold">L'Étymologiste</h2>
                                     </div>
@@ -222,8 +227,8 @@ export default function TriptychDisplay() {
                                 </section>
 
                                 {/* PANEL 2: THE ARCHIVE (Cora) */}
-                                <section className={`bg-stone-900/40 border border-stone-800 rounded-xl p-8 overflow-y-auto flex flex-col ${activeTab === 'history' ? 'block' : 'hidden md:flex'}`}>
-                                    <div className="flex items-center gap-3 mb-6 text-emerald-700">
+                                <section className={`bg-stone-900/40 border border-stone-800 rounded-xl p-6 md:p-8 overflow-y-auto custom-scrollbar h-full flex flex-col ${activeTab === 'history' ? 'block' : 'hidden md:flex'}`}>
+                                    <div className="flex items-center gap-3 mb-6 text-emerald-700 sticky top-0 bg-stone-900/95 p-2 -m-2 z-10 md:static md:bg-transparent md:p-0 md:m-0 backdrop-blur-sm md:backdrop-blur-none rounded-lg md:rounded-none border-b border-stone-800 md:border-none">
                                         <History size={20} />
                                         <h2 className="uppercase tracking-widest text-xs font-bold">L'Archiviste</h2>
                                     </div>
@@ -261,7 +266,7 @@ export default function TriptychDisplay() {
                                 </section>
 
                                 {/* PANEL 3: THE STUDIO (Video) */}
-                                <section className={`bg-black border border-stone-800 rounded-xl overflow-hidden relative ${activeTab === 'studio' ? 'block' : 'hidden md:block'}`}>
+                                <section className={`bg-black border border-stone-800 rounded-xl overflow-hidden relative h-full ${activeTab === 'studio' ? 'block' : 'hidden md:block'}`}>
                                     {/* Video Overlay UI */}
                                     <div className="absolute top-0 left-0 right-0 p-6 z-10 flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent">
                                         <div className="flex items-center gap-2 text-rose-500">
