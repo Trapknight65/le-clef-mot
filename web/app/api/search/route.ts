@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
-import { generateText } from 'ai';
+import { generateText, generateObject } from 'ai';
 import { z } from 'zod';
-import JSON5 from 'json5';
+
 
 /* 
  * API Route: /api/search
@@ -26,7 +26,8 @@ const searchSchema = z.object({
     scenes: z.array(z.object({
         scene_index: z.number(),
         prompt: z.string()
-    }))
+    })),
+    video_prompt: z.string().optional()
 });
 
 // Create Groq client
@@ -40,9 +41,22 @@ You are a 'Visual Etymologist'. Do not write paragraphs.
 Analyze the word and output JSON.
 
 IMPORTANT: 
-1. Ensure all arrays have commas between elements.
-2. ESCAPE ALL DOUBLE QUOTES inside strings (e.g., "The \"Word\"" not "The "Word"").
-3. Output ONLY the JSON object.
+[
+    {
+        "StartLine": 44,
+        "EndLine": 46,
+        "TargetContent": "1. Ensure all arrays have commas between elements.\n2. ESCAPE ALL DOUBLE QUOTES inside strings (e.g., \"The \\\"Word\\\"\" not \"The \"Word\"\").\n3. Output ONLY the JSON object.",
+        "ReplacementContent": "Focus on creating a rich, visual, and educational breakdown of the word.",
+        "AllowMultiple": false
+    },
+    {
+        "StartLine": 67,
+        "EndLine": 67,
+        "TargetContent": "Analyze the word and output JSON:",
+        "ReplacementContent": "Analyze the word:",
+        "AllowMultiple": false
+    }
+]
 
 Format:
 {
@@ -63,7 +77,7 @@ Format:
   ]
 }
 
-Analyze the word and output JSON:
+Analyze the word:
 `;
 
 export async function POST(req: NextRequest) {
@@ -78,33 +92,17 @@ export async function POST(req: NextRequest) {
         console.log(`[API] Processing search for: ${word}`);
 
         // 1. Generate Content via Groq
-        let aiData;
+        let aiData: any;
         if (process.env.GROQ_API_KEY) {
             try {
-                // Top of file: import JSON5 from 'json5';
-                const { text } = await generateText({
+                const { object } = await generateObject({
                     model: groq('llama-3.3-70b-versatile'),
                     system: SYSTEM_PROMPT,
                     prompt: `Analyze the visual etymology of: "${word}"`,
-                    temperature: 0.5, // Lower temperature for more deterministic JSON
+                    schema: searchSchema,
+                    temperature: 0.5,
                 });
-
-                // Robust JSON Cleanup
-                let cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-                const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
-                const jsonString = jsonMatch ? jsonMatch[0] : cleanText;
-
-                try {
-                    // Use JSON5 for relaxed parsing (trailing commas, unquoted keys, etc.)
-                    // Note: We need to require it if import fails, or assume import works.
-                    // Given ES module syntax in this file, import is improved.
-                    aiData = JSON5.parse(jsonString);
-                } catch (parseErr) {
-                    console.error("JSON5 Parse Error:", parseErr);
-                    console.log("Raw Text:", text);
-                    throw parseErr;
-                }
-
+                aiData = object;
             } catch (e: any) {
                 console.error("Groq API Error:", e);
                 console.log("Falling back to Mock Data due to API Error.");
