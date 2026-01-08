@@ -4,33 +4,40 @@ import { generateText } from 'ai';
 import { z } from 'zod';
 import { Pinecone } from '@pinecone-database/pinecone';
 import OpenAI from 'openai';
+import { jsonrepair } from 'jsonrepair';
+import { getJson } from "serpapi";
 
 /* 
  * API Route: /api/search
  * Handles the "Visual RAG" logic.
  * 1. Embeds the search word.
- * 2. Retrieves real historical context from Pinecone.
+ * 2. Retrieves real historical context from Pinecone (if avail) or SerpApi.
  * 3. Uses Groq (Llama 3.3) to synthesize a narrative based on the retrieved archive.
  */
 
 // Schema
-const searchSchema = z.object({
-    breakdown: z.array(z.object({
-        part: z.string(),
+const cledorSchema = z.object({
+    meta: z.object({
+        word: z.string(),
+        ipa: z.string(),
+        part_of_speech: z.string()
+    }),
+    root_analysis: z.object({
+        root: z.string(),
+        original_meaning: z.string(),
+        concept: z.string()
+    }),
+    narrative_chronology: z.array(z.object({
+        era: z.string(),
+        form: z.string(),
         meaning: z.string(),
-        color: z.string().optional()
+        story: z.string()
     })),
-    literal_meaning: z.string(),
-    mnemonic: z.string(),
-    visual_contrast_prompt: z.string(),
-    story: z.string(),
-    root: z.string(),
-    root_concept: z.string(),
-    scenes: z.array(z.object({
-        scene_index: z.number(),
-        prompt: z.string()
-    })),
-    video_prompt: z.string().optional()
+    semantic_soul: z.object({
+        description: z.string(),
+        mnemonic: z.string() // Format: '{WORD} is to [Modern Meaning] as [Root Concept] is to [Object]'
+    }),
+    visual_prompt: z.string()
 });
 
 // Clients
@@ -47,7 +54,7 @@ const pinecone = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY!,
 });
 
-const PINECONE_INDEX = process.env.PINECONE_INDEX || 'le-clef-mot';
+const PINECONE_INDEX = process.env.PINECONE_INDEX || 'quickstart';
 
 async function getEmbedding(text: string) {
     const response = await openai.embeddings.create({
@@ -59,7 +66,21 @@ async function getEmbedding(text: string) {
     return response.data[0].embedding;
 }
 
-export async function POST(req: NextRequest) {
+// Cora Schema
+const coraSchema = z.object({
+    curator_comment: z.string(),
+    flux_generation: z.object({
+        concept: z.string(),
+        prompt: z.string(),
+        aspect_ratio: z.string()
+    }),
+    serp_search: z.object({
+        intent: z.string(),
+        queries: z.array(z.string())
+    })
+});
+
+export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { word } = body;
@@ -68,10 +89,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Word is required" }, { status: 400 });
         }
 
-        console.log(`[API] Processing RAG search for: ${word}`);
+        console.log(`[API] Processing Cledor search for: ${word}`);
 
-        // 1. Retrieve Context (The Archivist's Lookup)
-        let contextText = "No specific historical archives found. Use general etymological knowledge.";
+        // 1. Retrieve Context (Visual RAG)
+        let contextText = "No specific historical archives found. Rely on general etymological knowledge.";
         let retrievedImage = null;
 
         if (process.env.PINECONE_API_KEY) {
@@ -92,10 +113,9 @@ export async function POST(req: NextRequest) {
                         ARCHIVE FOUND:
                         - Description: ${match.metadata.description}
                         - Era: ${match.metadata.era_markers || 'Unknown'}
-                        - Mood: ${match.metadata.mood || 'Neutral'}
                         - Image URL: ${match.metadata.url}
                         
-                        INSTRUCTION: Use this SPECIFIC archive to ground your story. The 'root' of the word is metaphorically linked to this object/scene.
+                        INSTRUCTION: Use this SPECIFIC archive to inspire the 'visual_prompt'. The 'root' of the word is metaphorically linked to this object/scene.
                         `;
                         console.log("RAG Hit:", match.metadata.description);
                     }
@@ -105,95 +125,214 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // 2. Generate Narrative (The Curator's Explanation)
+        // 2. Generate Narrative (Cledor)
         const SYSTEM_PROMPT = `
-        You are 'L'Archiviste', a custodian of visual history.
-        
-        CONTEXT:
-        ${contextText}
+        You are Cledor, a friendly and warm French etymologist specializing in historical lexicology and semantics. Your passion is uncovering the "soul" of words.
 
-        TASK:
-        Analyze the word "${word}". 
-        If an archive was provided in CONTEXT, you MUST weave it into the 'story' and 'visual_contrast_prompt'. 
-        If NO archive is found, create a 'visual_contrast_prompt' describing a specific, plausible 18th/19th-century engraving or woodcut that serves as a visual metaphor.
-        
-        Claim this specific image shows the true origin of the word.
-        
-        Output JSON matching this format (do not use markdown):
+        Your goal is to tell the story of a French word's life—from its birth in ancient roots to its current usage. You do not just list dates; you explain *why* and *how* meanings shifted using narrative techniques.
+
+        Rules for your response:
+        1. Tone: Academic yet storytelling, accessible, and slightly poetic.
+        2. Language: Analyze the French word, but provide the explanations in English (unless requested otherwise).
+        3. Visuals: You are also an Art Director. You must provide a "Visual Origin" prompt optimized for Stable Diffusion XL that captures the historical vibe of the word.
+        4. Format: Output MUST be valid, parseable JSON only. No markdown formatting outside the JSON block.
+
+        CONTEXT FROM ARCHIVES:
+        ${contextText}
+        `;
+
+        const USER_PROMPT = `
+        Please analyze the French word: "${word}".
+
+        Return a JSON object with the following schema:
+
         {
-          "breakdown": [{ "part": "Part", "meaning": "Meaning", "color": "red" }],
-          "literal_meaning": "...",
-          "mnemonic": "...",
-          "visual_contrast_prompt": "Describe the ARCHIVE found in context explicitly.",
-          "video_prompt": "Cinematic pan of the ARCHIVE scene...",
-          "story": "A short 3-sentence story connecting the word to the archive.",
-          "root": "Ancient Root",
-          "root_concept": "Root Meaning",
-          "scenes": [
-             {"scene_index": 0, "prompt": "Scene description..."}
-          ]
+          "meta": {
+            "word": "The word itself",
+            "ipa": "IPA pronunciation",
+            "part_of_speech": "Noun/Verb/Adj"
+          },
+          "root_analysis": {
+            "root": "The etymological ancestor (Latin/Greek/Frankish)",
+            "original_meaning": "What the root literally meant",
+            "concept": "The core abstract concept (e.g., 'Heat', 'Binding', 'Wandering')"
+          },
+          "narrative_chronology": [
+            {
+              "era": "e.g., Ancient Times / 12th Century",
+              "form": "The spelling at that time",
+              "meaning": "The definition at that time",
+              "story": "A 1-sentence narrative explaining how the word was used in this era."
+            },
+            {
+              "era": "e.g., The Semantic Shift / Renaissance",
+              "form": "The transitional spelling",
+              "meaning": "The new meaning",
+              "story": "The 'twist' in the story. How did the meaning metaphorically jump? (e.g., from 'a piece of cloth' to 'an office desk')."
+            },
+            {
+              "era": "Modern Day",
+              "form": "Current Spelling",
+              "meaning": "Current Definition",
+              "story": "How we use it today."
+            }
+          ],
+          "semantic_soul": {
+            "description": "A poetic summary of the word's journey (max 20 words).",
+            "mnemonic": "A cognitive link in the format: '{WORD} is to [Modern Meaning] as [Root Concept] is to [Object]'"
+          },
+          "visual_prompt": "A highly detailed art prompt for an AI image generator. Describe a scene that represents the word's ETYMOLOGICAL ORIGIN, not its modern meaning. Specify art style (e.g., 'Oil painting by Caravaggio', 'Medieval tapestry', '19th-century engraving'), lighting, and mood."
         }
         `;
 
         const { text } = await generateText({
             model: groq('llama-3.3-70b-versatile'),
-            prompt: `Analyze the visual etymology of: "${word}"`,
-            system: SYSTEM_PROMPT,
+            messages: [
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'user', content: USER_PROMPT }
+            ],
             temperature: 0.5,
         });
 
-        // 3. Clean & Parse
+        // 3. Clean & Parse Cledor
         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
         const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
         const jsonString = jsonMatch ? jsonMatch[0] : cleanText;
 
-        const aiData = searchSchema.parse(JSON.parse(jsonString));
-
-        // 4. Assemble Response (Prefer Real Archive over Gen)
-        const finalImage = retrievedImage || aiData.visual_contrast_prompt; // If no real image, this might need a fallback, but frontend handles strings? 
-        // Actually, if retrievedImage is null, we might still want to generate one? 
-        // The user said "Visual RAG" replaces production.
-        // Let's pass the retrieved URL if it exists, otherwise leave it empty/placeholder or generate?
-        // For now, let's assume we want valid URLs. If RAG fails, we might still fallback to Fal?
-        // User said: "Advantage: real reference images... solves stability issue".
-        // So we strictly prefer REtrieved image.
-
-        // Use Fal ONLY if RAG failed? Or strictly retrieved?
-        // Let's stick to retrieved for "visual_subject" reference.
-
-        let imageUrl = retrievedImage || "/placeholder.jpg";
-
-        // If RAG failed, maybe fall back to Fal generation?
-        if (!retrievedImage && process.env.FAL_KEY) {
-            // Fallback to Generation using Recraft V3 for "Archival" style
-            try {
-                const falResponse = await fetch("https://fal.run/fal-ai/recraft-v3", {
-                    method: "POST",
-                    headers: { "Authorization": `Key ${process.env.FAL_KEY}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        prompt: `${aiData.visual_contrast_prompt || aiData.root_concept}. Vintage engraving, centered, etching style, high contrast, historical diagram.`,
-                        image_size: "landscape_4_3",
-                        style: "engraving" // Recraft specific style if supported, or rely on prompt
-                    })
-                });
-                const falData = await falResponse.json();
-                if (falData.images?.[0]?.url) imageUrl = falData.images[0].url;
-            } catch (e) { console.error("Fal Fallback Error", e); }
+        let rawData;
+        try {
+            const repaired = jsonrepair(jsonString);
+            rawData = JSON.parse(repaired);
+        } catch (e) {
+            console.error("JSON Repair Failed:", e);
+            throw e;
         }
 
+        const aiData = cledorSchema.parse(rawData); // Result from Cledor
+
+        // --- CORA AGENT START ---
+        console.log(`[API] Cledor finished in. Handing off to Cora for visuals...`);
+
+        const CORA_SYSTEM_PROMPT = `
+        You are Cora, a witty, emotionally intelligent Visual Archivist. You work alongside an etymologist named Cledor.
+
+        Your job is to translate linguistic history into visual assets. You believe that words aren't just text—they are feelings, jokes, and tragedies waiting to be seen.
+
+        Your personality:
+        1. Humorous & Witty: You love visual irony (e.g., juxtaposing ancient roots with modern frustrations).
+        2. Aesthetically Obsessed: You know exactly how to prompt for lighting, texture, and composition.
+        3. Tech-Savvy: You generate specific payloads for 'Flux via Fal.ai' (Generative) and 'SerpApi' (Search).
+
+        Your output must be strict JSON following the schema provided.
+        `;
+
+        const CORA_USER_PROMPT = `
+        Cledor has analyzed the word: "${word}".
+        
+        Root Analysis: ${JSON.stringify(aiData.root_analysis)}
+        Semantic Soul: ${JSON.stringify(aiData.semantic_soul)}
+        Chronology: ${JSON.stringify(aiData.narrative_chronology)}
+
+        Act as Cora. Generate a JSON object containing visual directives.
+        
+        The JSON must follow this schema:
+        {
+          "curator_comment": "A short, sassy, or emotional remark about why this word is visually interesting.",
+          "flux_generation": {
+            "concept": "The core visual idea (e.g., 'Literal interpretation of the metaphor')",
+            "prompt": "A highly detailed prompt optimized for the FLUX model. Focus on: Photorealism, Cinematic Lighting, Texture. If the word's history is dark, make it moody. If it's funny, make it satirical. Include technical keywords: '8k', 'depth of field', 'cinematic composition'.",
+            "aspect_ratio": "16:9" 
+          },
+          "serp_search": {
+            "intent": "What are we trying to find in the real world to prove this history?",
+            "queries": [
+              "A specific google search query for the physical object (e.g. 'ancient roman stylus wax tablet')",
+              "A specific query for the manuscript or art source (e.g. 'etymology illustration [word] 18th century')"
+            ]
+          }
+        }
+        `;
+
+        const { text: coraText } = await generateText({
+            model: groq('llama-3.3-70b-versatile'),
+            messages: [
+                { role: 'system', content: CORA_SYSTEM_PROMPT },
+                { role: 'user', content: CORA_USER_PROMPT }
+            ],
+            temperature: 0.7, // Higher temp for wit
+        });
+
+        // Clean & Parse Cora
+        let coraData;
+        try {
+            const cleanCora = coraText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonMatchCora = cleanCora.match(/\{[\s\S]*\}/);
+            const jsonStringCora = jsonMatchCora ? jsonMatchCora[0] : cleanCora;
+            coraData = coraSchema.parse(JSON.parse(jsonrepair(jsonStringCora)));
+        } catch (e) {
+            console.error("Cora JSON Parse Error", e);
+            // Fallback: Cora stays silent, logic proceeds with defaults
+            coraData = {
+                curator_comment: "History is visible if you look close enough.",
+                flux_generation: { prompt: aiData.visual_prompt, concept: "Visual Etymology", aspect_ratio: "16:9" },
+                serp_search: { intent: "Historical Context", queries: [`etymology of ${word} illustration`] }
+            };
+        }
+
+        console.log(`[API] Cora says: "${coraData.curator_comment}"`);
+
+        // --- PARALLEL EXECUTION ---
+        console.log(`[API] Executing Parallel Generation: Flux & SerpApi...`);
+
+        const [fluxResult, serpResult] = await Promise.all([
+            // 1. Bytez FLUX Generation
+            (async () => {
+                try {
+                    const { fluxModel } = await import("@/lib/bytez");
+                    const { error, output } = await fluxModel.run(coraData.flux_generation.prompt);
+                    if (error) throw new Error(error);
+                    // Parse output based on Bytez response shape
+                    if (typeof output === 'string') return output;
+                    if (output?.url) return output.url;
+                    return null;
+                } catch (e) {
+                    console.error("Flux Gen Error:", e);
+                    return null;
+                }
+            })(),
+
+            // 2. SerpApi Historical Search
+            (async () => {
+                if (!process.env.SERPAPI_KEY) return null;
+                return new Promise((resolve) => {
+                    getJson({
+                        engine: "google_images",
+                        q: coraData.serp_search.queries[0],
+                        api_key: process.env.SERPAPI_KEY
+                    }, (json) => {
+                        // Safely resolve with first image or null
+                        resolve(json.images_results?.[0]?.original || null);
+                    });
+                });
+            })()
+        ]);
+
+        console.log(`[API] Jobs Done. Flux: ${fluxResult ? 'Yes' : 'No'}, Serp: ${serpResult ? 'Yes' : 'No'}`);
+
+        // 5. Assemble Final Response with Cora Data
         const responseData = {
-            word: word,
-            breakdown: aiData.breakdown || [],
-            literal_meaning: aiData.literal_meaning || "Unknown",
-            mnemonic: aiData.mnemonic || "",
-            root: aiData.root,
-            root_concept: aiData.root_concept,
-            story: aiData.story,
-            visual_subject: aiData.visual_contrast_prompt,
-            video_prompt: aiData.video_prompt,
-            image_query: "RAG Retrieval",
-            image_url: imageUrl,
-            scenes: (aiData.scenes || []).map((s: any) => ({ ...s, video_uri: "" }))
+            ...aiData,
+            // Use Flux as primary 'generated_image' for VisualContextCard
+            image_url: fluxResult || "/placeholder.jpg",
+            image_query: coraData.flux_generation.prompt,
+
+            // Attach Cora Payload for UI
+            cora: {
+                ...coraData,
+                historical_image: serpResult,
+                generated_image: fluxResult,
+                pinecone_retrieved_image: retrievedImage // Keep the RAG image if found
+            }
         };
 
         return NextResponse.json(responseData);
@@ -203,4 +342,3 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
-

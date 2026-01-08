@@ -1,7 +1,7 @@
 import { db, storage } from './firebase';
 import { doc, getDoc, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { EtymologyData } from '@/app/components/TriptychDisplay';
+import { EtymologyData } from '@/lib/types';
 
 export interface WordDocument {
     slug: string;
@@ -70,7 +70,7 @@ export async function saveWordToCache(term: string, data: EtymologyData) {
         const docRef = doc(db, "words", slug);
         await setDoc(docRef, {
             slug,
-            term: data.word,
+            term: data.meta.word,
             etymology: data,
             created_at: Timestamp.now()
         });

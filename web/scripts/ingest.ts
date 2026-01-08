@@ -11,7 +11,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 // Configuration
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
-const PINECONE_INDEX = process.env.PINECONE_INDEX || 'le-clef-mot';
+const PINECONE_INDEX = process.env.PINECONE_INDEX || 'quickstart';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 if (!GROQ_API_KEY || !PINECONE_API_KEY || !OPENAI_API_KEY) {
