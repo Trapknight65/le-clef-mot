@@ -1,9 +1,59 @@
-import ParticleBackground from './components/effects/ParticleBackground';
+"use client";
 
-// ... imports ...
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Loader2, Sparkles, ArrowRight } from 'lucide-react';
+import { EtymologyData } from '@/lib/types';
+import ResultsDashboard from './components/ResultsDashboard';
+import ParticleBackground from './components/effects/ParticleBackground';
+import { getCachedWord, saveWordToCache } from '@/lib/store';
 
 export default function Home() {
-  // ... existing logic ...
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<EtymologyData | null>(null);
+
+  const handleSearch = async (term: string) => {
+    if (!term.trim()) return;
+    setLoading(true);
+    setData(null);
+
+    // 1. Check Cache
+    try {
+      const cached = await getCachedWord(term);
+      if (cached) {
+        console.log("Cache Hit:", cached.slug);
+        setData(cached.etymology);
+        setLoading(false);
+        return;
+      }
+    } catch (e) {
+      console.warn("Cache Read Error", e);
+    }
+
+    // 2. Fetch API
+    try {
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word: term })
+      });
+
+      if (!response.ok) throw new Error("Search failed");
+
+      const result: EtymologyData = await response.json();
+      setData(result);
+
+      // 3. Save to Cache (Async)
+      saveWordToCache(term, result);
+
+    } catch (error) {
+      console.error("Search Error:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-etymo-bg text-slate-100 flex flex-col font-sans selection:bg-etymo-primary selection:text-white overflow-x-hidden">

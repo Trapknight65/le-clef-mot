@@ -59,7 +59,7 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                             <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent capitalize">
                                 {data.meta.word}
                             </h1>
-                            <span className="text-etymo-accent text-lg font-mono tracking-wider">
+                            <span className="text-cyan-400 text-lg font-mono tracking-wider">
                                 {data.root_analysis.root}
                             </span>
                         </div>
@@ -97,7 +97,15 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                                 src={data.image_url}
                                 alt="Visual Origin"
                                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700"
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.parentElement?.classList.add('bg-gradient-to-br', 'from-slate-800', 'to-slate-900');
+                                }}
                             />
+                            {/* Fallback pattern if image hidden/missing */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 -z-10 flex items-center justify-center">
+                                <span className="text-slate-700 font-bold uppercase tracking-widest text-xs">Visual Archive Unavailable</span>
+                            </div>
 
                             {/* Cora's Commentary Overlay */}
                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-900/90 to-transparent p-6 pt-12">
@@ -120,7 +128,7 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                                 </div>
                             </div>
 
-                            {/* Historical Reference Button (e.g. if we have both) */}
+                            {/* Historical Reference Button */}
                             {data.cora?.historical_image && (
                                 <div className="absolute top-4 right-4">
                                     <div className="w-12 h-12 rounded-lg border-2 border-slate-600 bg-slate-900 overflow-hidden shadow-lg hover:scale-110 transition-transform cursor-help" title="Historical Reference">
@@ -130,8 +138,9 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                             )}
                         </>
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-600">
-                            No Visual Data
+                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 bg-slate-900/50 p-6 text-center">
+                            <BookOpen size={48} className="mb-4 opacity-20" />
+                            <p className="text-sm">No Visual Data Retrieved</p>
                         </div>
                     )}
                 </div>

@@ -125,7 +125,13 @@ export async function POST(req: Request) {
             }
         }
 
-        // 2. Generate Narrative (Cledor)
+        // 2. Generate Narrative (Cledor) - Now using Bytez via LangChain
+        const { BytezChatModel } = await import("@/lib/langchain-bytez");
+
+        // Using a high-quality model available on Bytez (e.g., Llama 3 or similar)
+        // Ensure this ID matches a valid Bytez model
+        const llm = new BytezChatModel({ modelId: "meta-llama/Meta-Llama-3-70B-Instruct" });
+
         const SYSTEM_PROMPT = `
         You are Cledor, a friendly and warm French etymologist specializing in historical lexicology and semantics. Your passion is uncovering the "soul" of words.
 
@@ -162,13 +168,13 @@ export async function POST(req: Request) {
               "era": "e.g., Ancient Times / 12th Century",
               "form": "The spelling at that time",
               "meaning": "The definition at that time",
-              "story": "A 1-sentence narrative explaining how the word was used in this era."
+              "story": "A narrative explaining how the word was used in this era, specifically citing daily life scenes (e.g., 'Soldiers used it to describe rations', 'Peasants used it for tools')."
             },
             {
               "era": "e.g., The Semantic Shift / Renaissance",
               "form": "The transitional spelling",
               "meaning": "The new meaning",
-              "story": "The 'twist' in the story. How did the meaning metaphorically jump? (e.g., from 'a piece of cloth' to 'an office desk')."
+              "story": "The 'twist' in the story. Explain the shift using daily life examples (e.g., how the tool became a metaphor)."
             },
             {
               "era": "Modern Day",
@@ -185,14 +191,12 @@ export async function POST(req: Request) {
         }
         `;
 
-        const { text } = await generateText({
-            model: groq('llama-3.3-70b-versatile'),
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: USER_PROMPT }
-            ],
-            temperature: 0.5,
-        });
+        const response = await llm.invoke([
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: USER_PROMPT }
+        ]);
+
+        const text = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
 
         // 3. Clean & Parse Cledor
         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -253,14 +257,12 @@ export async function POST(req: Request) {
         }
         `;
 
-        const { text: coraText } = await generateText({
-            model: groq('llama-3.3-70b-versatile'),
-            messages: [
-                { role: 'system', content: CORA_SYSTEM_PROMPT },
-                { role: 'user', content: CORA_USER_PROMPT }
-            ],
-            temperature: 0.7, // Higher temp for wit
-        });
+        const coraResponse = await llm.invoke([
+            { role: "system", content: CORA_SYSTEM_PROMPT },
+            { role: "user", content: CORA_USER_PROMPT }
+        ]);
+
+        const coraText = typeof coraResponse.content === 'string' ? coraResponse.content : JSON.stringify(coraResponse.content);
 
         // Clean & Parse Cora
         let coraData;
@@ -285,18 +287,14 @@ export async function POST(req: Request) {
         console.log(`[API] Executing Parallel Generation: Flux & SerpApi...`);
 
         const [fluxResult, serpResult] = await Promise.all([
-            // 1. Bytez FLUX Generation
+            // 1. Bytez Generic Generation (Flux -> SDXL -> SD1.5)
             (async () => {
                 try {
-                    const { fluxModel } = await import("@/lib/bytez");
-                    const { error, output } = await fluxModel.run(coraData.flux_generation.prompt);
-                    if (error) throw new Error(error);
-                    // Parse output based on Bytez response shape
-                    if (typeof output === 'string') return output;
-                    if (output?.url) return output.url;
-                    return null;
+                    const { generateImage } = await import("@/lib/bytez");
+                    const imageUrl = await generateImage(coraData.flux_generation.prompt);
+                    return imageUrl;
                 } catch (e) {
-                    console.error("Flux Gen Error:", e);
+                    console.error("Image Gen Error:", e);
                     return null;
                 }
             })(),

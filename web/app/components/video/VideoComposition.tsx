@@ -61,10 +61,21 @@ export const MyVideo = ({ script, images }: MyVideoProps) => {
                 const durationInFrames = scene.duration * FPS;
 
                 // Determine Visual Source
-                let visualSrc = "https://placehold.co/1080x1920/1e293b/white?text=Stock+Video";
-                if (scene.visual_source === "Flux-Generated" && images?.cora) {
+                let visualSrc = "https://placehold.co/1080x1920/1e293b/white?text=Le+Mot+Clef"; // Default brand placeholder
+
+                // 1. Try Flux Image (High Priority)
+                if (scene.visual_source === "Flux-Generated" && images?.cora && images.cora.startsWith('http')) {
                     visualSrc = images.cora;
-                } else if (scene.visual_source === "Stock-Video" && images?.historical) {
+                }
+                // 2. Try Historical Image
+                else if (scene.visual_source === "Stock-Video" && images?.historical && images.historical.startsWith('http')) {
+                    visualSrc = images.historical;
+                }
+                // 3. Last Resort Fallback to whatever image we have
+                else if (images?.cora && images.cora.startsWith('http')) {
+                    visualSrc = images.cora;
+                }
+                else if (images?.historical && images.historical.startsWith('http')) {
                     visualSrc = images.historical;
                 }
 
