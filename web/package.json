@@ -17,7 +17,6 @@
     "@types/animejs": "^3.1.13",
     "ai": "^6.0.3",
     "animejs": "^3.2.2",
-    "bytez.js": "^3.0.0",
     "cloudinary": "^2.8.0",
     "dotenv": "^17.2.3",
     "firebase": "^12.7.0",

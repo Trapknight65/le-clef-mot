@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
             messages,
         });
 
-        return result.toDataStreamResponse();
+        return result.toTextStreamResponse();
     } catch (error: any) {
         console.error("[API/chat] Error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
