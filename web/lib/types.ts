@@ -48,7 +48,7 @@ export interface CledorResponse {
             queries: string[];
         };
         historical_image?: string; // Result from SerpApi
-        generated_image?: string; // Result from Bytez
+        generated_image?: string; // Result from Fal
     };
 }
 

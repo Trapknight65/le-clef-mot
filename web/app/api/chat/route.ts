@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deepseekModel } from "@/lib/bytez";
+import { createOpenAI as createGroq } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 
 /*
  * API Route: /api/chat
- * Uses Bytez SDK with DeepSeek-R1 for AI chat/reasoning
+ * Uses Groq (Llama 3.3) for AI chat/reasoning (Migrated from Bytez)
  */
+
+const groq = createGroq({
+    baseURL: 'https://api.groq.com/openai/v1',
+    apiKey: process.env.GROQ_API_KEY,
+});
 
 export async function POST(req: NextRequest) {
     try {
@@ -18,19 +24,14 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        console.log("[API/chat] Processing with DeepSeek-R1...");
+        console.log("[API/chat] Processing with Groq (Llama 3.3)...");
 
-        // Send input to DeepSeek-R1 model
-        const { error, output } = await deepseekModel.run(messages);
+        const result = streamText({
+            model: groq('llama-3.3-70b-versatile'),
+            messages,
+        });
 
-        if (error) {
-            console.error("[API/chat] DeepSeek Error:", error);
-            return NextResponse.json({ error: error }, { status: 500 });
-        }
-
-        console.log("[API/chat] Success:", output);
-
-        return NextResponse.json({ output });
+        return result.toDataStreamResponse();
     } catch (error: any) {
         console.error("[API/chat] Error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });

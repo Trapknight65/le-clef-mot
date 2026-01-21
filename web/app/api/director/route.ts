@@ -41,11 +41,6 @@ export async function POST(req: NextRequest) {
 
         console.log(`[Director] Action! Creating script for: ${word}`);
 
-        // (Removed previous unused prompts)
-
-        // 0. David (Director) - Now using Bytez via LangChain
-        const { BytezChatModel } = await import("@/lib/langchain-bytez");
-        const llm = new BytezChatModel({ modelId: "meta-llama/Meta-Llama-3-70B-Instruct" });
 
         const SYSTEM_PROMPT = `
         You are David, the Director of 'Le Mot Clef'. You are an expert in short-form video storytelling (TikTok/Reels/Shorts).
@@ -78,12 +73,16 @@ export async function POST(req: NextRequest) {
         RETURN ONLY JSON. No markdown.
         `;
 
-        const response = await llm.invoke([
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: USER_PROMPT }
-        ]);
+        // 0. David (Director) - Now using Groq (Llama 3.3)
+        const response = await generateText({
+            model: groq('llama-3.3-70b-versatile'),
+            messages: [
+                { role: "system", content: SYSTEM_PROMPT },
+                { role: "user", content: USER_PROMPT }
+            ]
+        });
 
-        const text = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+        const text = response.text;
 
         // Parse
         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();

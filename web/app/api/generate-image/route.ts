@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fluxModel } from "@/lib/bytez";
+import { generateImage } from "@/lib/fal";
 
 /*
  * API Route: /api/generate-image
- * Uses Bytez SDK with FLUX.2-dev-Turbo for image generation
+ * Uses Bytez with FLUX.2-dev-Turbo (with SDXL/SD 1.5 fallbacks) for image generation
  */
 
 export async function POST(req: NextRequest) {
@@ -18,21 +18,22 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        console.log("[API/generate-image] Generating with FLUX.2-dev-Turbo:", prompt);
+        console.log("[API/generate-image] Generating with Bytez (Flux):", prompt);
 
-        // Send prompt to FLUX.2-dev-Turbo model
-        const { error, output } = await fluxModel.run(prompt);
+        // Send prompt to Fal
+        const imageUrl = await generateImage(prompt);
 
-        if (error) {
-            console.error("[API/generate-image] FLUX Error:", error);
-            return NextResponse.json({ error: error }, { status: 500 });
+        if (!imageUrl) {
+            console.error("[API/generate-image] Fal Error: No image returned");
+            return NextResponse.json({ error: "Failed to generate image" }, { status: 500 });
         }
 
-        console.log("[API/generate-image] Success:", output);
+        console.log("[API/generate-image] Success:", imageUrl);
 
-        return NextResponse.json({ output });
+        return NextResponse.json({ output: imageUrl });
     } catch (error: any) {
         console.error("[API/generate-image] Error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+

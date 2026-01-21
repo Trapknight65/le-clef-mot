@@ -125,13 +125,7 @@ export async function POST(req: Request) {
             }
         }
 
-        // 2. Generate Narrative (Cledor) - Now using Bytez via LangChain
-        const { BytezChatModel } = await import("@/lib/langchain-bytez");
-
-        // Using a high-quality model available on Bytez (e.g., Llama 3 or similar)
-        // Ensure this ID matches a valid Bytez model
-        const llm = new BytezChatModel({ modelId: "meta-llama/Meta-Llama-3-70B-Instruct" });
-
+        // 2. Generate Narrative (Cledor) - Using Groq via Vercel AI SDK
         const SYSTEM_PROMPT = `
         You are Cledor, a friendly and warm French etymologist specializing in historical lexicology and semantics. Your passion is uncovering the "soul" of words.
 
@@ -191,12 +185,11 @@ export async function POST(req: Request) {
         }
         `;
 
-        const response = await llm.invoke([
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: USER_PROMPT }
-        ]);
-
-        const text = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+        const { text } = await generateText({
+            model: groq('llama-3.3-70b-versatile'),
+            system: SYSTEM_PROMPT,
+            prompt: USER_PROMPT,
+        });
 
         // 3. Clean & Parse Cledor
         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -215,7 +208,7 @@ export async function POST(req: Request) {
         const aiData = cledorSchema.parse(rawData); // Result from Cledor
 
         // --- CORA AGENT START ---
-        console.log(`[API] Cledor finished in. Handing off to Cora for visuals...`);
+        console.log(`[API] Cledor finished. Handing off to Cora for visuals...`);
 
         const CORA_SYSTEM_PROMPT = `
         You are Cora, a witty, emotionally intelligent Visual Archivist. You work alongside an etymologist named Cledor.
@@ -257,12 +250,11 @@ export async function POST(req: Request) {
         }
         `;
 
-        const coraResponse = await llm.invoke([
-            { role: "system", content: CORA_SYSTEM_PROMPT },
-            { role: "user", content: CORA_USER_PROMPT }
-        ]);
-
-        const coraText = typeof coraResponse.content === 'string' ? coraResponse.content : JSON.stringify(coraResponse.content);
+        const { text: coraText } = await generateText({
+            model: groq('llama-3.3-70b-versatile'),
+            system: CORA_SYSTEM_PROMPT,
+            prompt: CORA_USER_PROMPT,
+        });
 
         // Clean & Parse Cora
         let coraData;
@@ -287,10 +279,10 @@ export async function POST(req: Request) {
         console.log(`[API] Executing Parallel Generation: Flux & SerpApi...`);
 
         const [fluxResult, serpResult] = await Promise.all([
-            // 1. Bytez Generic Generation (Flux -> SDXL -> SD1.5)
+            // 1. Fal.ai Generation (Flux)
             (async () => {
                 try {
-                    const { generateImage } = await import("@/lib/bytez");
+                    const { generateImage } = await import("@/lib/fal");
                     const imageUrl = await generateImage(coraData.flux_generation.prompt);
                     return imageUrl;
                 } catch (e) {

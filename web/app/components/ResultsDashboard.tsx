@@ -49,14 +49,14 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                 className="grid grid-cols-1 lg:grid-cols-3 gap-6"
             >
                 {/* 1. Definition Card (Main Info) */}
-                <div className="col-span-1 lg:col-span-2 bg-etymo-card border border-slate-800 rounded-2xl p-8 shadow-xl relative overflow-hidden group">
+                <div className="col-span-1 lg:col-span-2 bg-etymo-card border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <BookOpen size={120} />
                     </div>
 
                     <div className="relative z-10">
-                        <div className="flex items-baseline gap-4 mb-2">
-                            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent capitalize">
+                        <div className="flex items-baseline gap-4 mb-2 flex-wrap">
+                            <h1 className="text-4xl md:text-7xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent capitalize break-words">
                                 {data.meta.word}
                             </h1>
                             <span className="text-cyan-400 text-lg font-mono tracking-wider">
@@ -157,17 +157,22 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                     </div>
 
                     <div className="relative">
-                        {/* Vertical line for mobile, horizontal for desktop? Lets do simple vertical stack for robustness or horizontal grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
+                        {/* Vertical line for mobile, horizontal for desktop */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative pl-4 md:pl-0">
                             {/* Connector Line (Desktop) */}
                             <div className="hidden md:block absolute top-[18px] left-0 right-0 h-0.5 bg-slate-800 -z-0"></div>
+                            {/* Connector Line (Mobile) */}
+                            <div className="md:hidden absolute top-0 bottom-0 left-[21px] w-0.5 bg-slate-800 -z-0"></div>
 
                             {data.narrative_chronology.map((era, idx) => (
-                                <div key={idx} className="relative z-10 flex flex-col md:items-center md:text-center gap-3 p-4 bg-slate-900/50 md:bg-transparent rounded-lg md:rounded-none border md:border-none border-slate-800">
-                                    <div className="flex items-center gap-3 md:flex-col md:gap-2">
-                                        <div className={`w-3 h-3 md:w-4 md:h-4 rounded-full border-2 ${idx === data.narrative_chronology.length - 1 ? 'bg-etymo-primary border-etymo-accent shadow-[0_0_10px_#06b6d4]' : 'bg-slate-700 border-slate-500'}`}></div>
-                                        <span className="text-xs font-bold uppercase text-etymo-accent">{era.era}</span>
+                                <div key={idx} className="relative z-10 flex flex-col md:items-center md:text-center gap-3 p-4 bg-slate-900/50 md:bg-transparent rounded-lg md:rounded-none border md:border-none border-slate-800 ml-4 md:ml-0">
+                                    <div className="flex items-center gap-4 md:flex-col md:gap-2 absolute -left-[27px] top-4 md:static">
+                                        <div className={`w-3 h-3 md:w-4 md:h-4 rounded-full border-2 shrink-0 ${idx === data.narrative_chronology.length - 1 ? 'bg-etymo-primary border-etymo-accent shadow-[0_0_10px_#06b6d4]' : 'bg-slate-900 border-slate-500'}`}></div>
+                                        <span className="text-xs font-bold uppercase text-etymo-accent hidden md:block">{era.era}</span>
                                     </div>
+
+                                    {/* Mobile Era Label */}
+                                    <span className="text-xs font-bold uppercase text-etymo-accent md:hidden mb-1 block">{era.era}</span>
 
                                     <div>
                                         <p className="text-lg font-bold text-white mb-1">{era.form}</p>

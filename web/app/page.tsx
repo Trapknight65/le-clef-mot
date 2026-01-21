@@ -65,7 +65,7 @@ export default function Home() {
       </div>
 
       {/* NAV / HEADER */}
-      <header className="relative z-10 w-full p-6 flex items-center justify-between border-b border-white/5 backdrop-blur-sm">
+      <header className="relative z-10 w-full p-4 md:p-6 flex items-center justify-between border-b border-white/5 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-br from-etymo-primary to-etymo-accent rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
             <span className="font-serif font-bold text-lg text-white">M</span>
@@ -90,10 +90,10 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-medium text-etymo-accent mb-8">
               <Sparkles size={12} />
-              <span>Powered by Bytez AI Models</span>
+              <span>Powered by AI</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-6 bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent max-w-4xl mx-auto leading-[0.9]">
+            <h1 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-6 bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent max-w-4xl mx-auto leading-[0.9]">
               Uncover the Soul <br /> of French Words
             </h1>
 
