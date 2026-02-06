@@ -1,0 +1,7 @@
+{
+    "name": "le-clef-mot-root",
+    "private": true,
+    "scripts": {
+        "vercel-build": "cd web && npm install && npm run build"
+    }
+}
