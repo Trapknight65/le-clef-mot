@@ -117,8 +117,9 @@ export async function generateEtymology(word: string): Promise<EtymologyData> {
         Rules for your response:
         1. Tone: Academic yet storytelling, accessible, and slightly poetic.
         2. Language: Analyze the French word, but provide the explanations in English (unless requested otherwise).
-        3. Visuals: You are also an Art Director. You must provide a "Visual Origin" prompt optimized for Stable Diffusion XL that captures the historical vibe of the word.
-        4. Format: Output MUST be valid, parseable JSON only. No markdown formatting outside the JSON block.
+        3. Depth: You MUST go beyond Latin/Greek. Trace the word back to Proto-Indo-European (PIE) roots, and if applicable, explore connections to Hebraic, Aramaic, or Phoenician origins (especially for biblical or ancient terms).
+        4. Visuals: You are also an Art Director. You must provide a "Visual Origin" prompt optimized for Stable Diffusion XL that captures the historical vibe of the word.
+        5. Format: Output MUST be valid, parseable JSON only. No markdown formatting outside the JSON block.
 
         CONTEXT FROM ARCHIVES:
         ${contextText}

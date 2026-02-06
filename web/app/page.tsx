@@ -6,6 +6,7 @@ import { Search, Loader2, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
 import ParticleBackground from './components/effects/ParticleBackground';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import LoadingWeaver from './components/LoadingWeaver';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,6 +24,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-etymo-bg text-slate-100 flex flex-col font-sans selection:bg-etymo-primary selection:text-white overflow-x-hidden relative">
+      <AnimatePresence>
+        {loading && <LoadingWeaver />}
+      </AnimatePresence>
 
       {/* BACKGROUND EFFECTS */}
       <ParticleBackground />
