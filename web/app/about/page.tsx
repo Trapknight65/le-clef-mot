@@ -95,6 +95,25 @@ export default function AboutPage() {
                             </p>
                         </div>
                     </section>
+
+                    {/* Section 4 */}
+                    <section className="relative">
+                        <div className="absolute -left-12 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-emerald-500/50 to-transparent hidden md:block"></div>
+                        <div className="absolute -left-[54px] top-0 w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] hidden md:block"></div>
+
+                        <h2 className="text-3xl font-bold text-white mb-6">The Mission: Reclaiming Depth</h2>
+                        <div className="prose prose-invert prose-lg text-slate-300">
+                            <p>
+                                We built this because we realized we had forgotten how to read. In the age of the infinite scroll, we scan. We skim. Words became mere labels, flat and functional.
+                            </p>
+                            <p>
+                                <strong>Le Mot Clef</strong> is an act of resistance against superficiality. We wanted to turn words back into portals. To remind ourselves that a word like <em>"Liberté"</em> or <em>"Mélancolie"</em> is not just a string of letters, but a ruin, a story, and a universe waiting to be explored.
+                            </p>
+                            <p>
+                                We use AI not to summarize the world, but to expand it. To make you stop, look, and feel the weight of the language you speak.
+                            </p>
+                        </div>
+                    </section>
                 </div>
             </div>
         </main>
