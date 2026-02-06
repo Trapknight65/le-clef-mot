@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Training Scope: A Chronicle of Evolution</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        h1, h2, h3 {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: #111;
+        }
+        h1 {
+            border-bottom: 2px solid #111;
+            padding-bottom: 10px;
+        }
+        blockquote {
+            font-style: italic;
+            border-left: 4px solid #ccc;
+            margin: 20px 0;
+            padding-left: 20px;
+            color: #555;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        @media print {
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>The AI Training Scope: A Chronicle of Evolution</h1>
+
+    <blockquote>"In the beginning, there was noise. And we sought to tune it into a signal."</blockquote>
+
+    <h2>I. Executive Summary: The Narrative Arc</h2>
+    <p>This document traces the trajectory of Artificial Intelligence integration within the <code>le_clef_mot</code> workspace. It is not merely a technical log but an observation of a system finding its voice.</p>
+    
+    <p>The journey describes a distinct pivot: moving from a constrained, monolithic attempt (Bytez) to a modular, high-performance orchestration (Groq & Fal.ai). This shift was not just operational; it was philosophical—moving from "making it work" to "making it sing." The result is a system capable of <strong>Visual RAG</strong> (Retrieval-Augmented Generation), where narrative and imagery dance in real-time.</p>
+
+    <h2>II. Chronological Evolution</h2>
+
+    <h3>Phase 1: The Friction (The Bytez Era)</h3>
+    <p><em>Context: Early January 2026</em></p>
+    <p>The initial "gameplay loop" was built around <strong>Bytez</strong>, attempting to utilize <code>FLUX.2-dev-Turbo</code> for image generation.</p>
+    <ul>
+        <li><strong>The Dissonance</strong>: The system hit a hard ceiling. The API returned "Please upgrade your account," a breach of the implicit player contract. Even with credits, the model size limitations on the free plan created a "dead end" in the user journey.</li>
+        <li><strong>The Observation</strong>: The tool was fighting the artist. instead of enabling flow, it introduced friction.</li>
+    </ul>
+
+    <h3>Phase 2: The Modulation (The Pivot)</h3>
+    <p><em>Context: January 8, 2026</em></p>
+    <p>A strategic decision was made to decouple the modalities. We deconstructed the "monolith" into specialized instruments.</p>
+    <ul>
+        <li><strong>Text Generation</strong>: Switched to <strong>Groq</strong> hosting <code>llama-3.3-70b-versatile</code>.
+            <ul><li><em>Why</em>: Speed and context window. A loose, lyrical model capable of nuance.</li></ul>
+        </li>
+        <li><strong>Image Generation</strong>: Switched to <strong>Fal.ai</strong> hosting <code>fal-ai/flux/dev</code>.
+            <ul><li><em>Why</em>: Reliability and quality. A visual synthesizer that respects the prompt's geometry.</li></ul>
+        </li>
+        <li><strong>The Code</strong>: New libraries were composed (<code>lib/fal.ts</code>) to handle this specific handshake.</li>
+    </ul>
+
+    <h3>Phase 3: The Symphony (Integration & Visual RAG)</h3>
+    <p><em>Context: Mid-January 2026</em></p>
+    <p>With the bedrock stable, the focus shifted to the "cinematic experience."</p>
+    <ul>
+        <li><strong>Visual RAG</strong>: The system now retrieves context and generates accompanying visuals dynamically.</li>
+        <li><strong>Narrative Synthesis</strong>: The AI doesn't just "answer"; it weaves a story, supported by the <code>ResultsDashboard</code>.</li>
+        <li><strong>Refinement</strong>:
+            <ul>
+                <li><em>Geometry</em>: The video player was retuned to fit the diamond geometry of the portal (Jan 14).</li>
+                <li><em>Aesthetics</em>: Buttons were ghosted, controls were hidden until needed—the UI became a "transparent interface" (Jan 15).</li>
+                <li><em>Mock Data Modulation</em>: Realism was injected into user metrics (Spotify, TikTok counts) to test the system's reaction to "success" (Jan 15).</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>III. Technical Footprint</h2>
+    <p>The following artifacts represent the "score" of this composition:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Component</th>
+                <th>Technology / Model</th>
+                <th>File Path</th>
+                <th>Function</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Logic Core</strong></td>
+                <td><code>llama-3.3-70b-versatile</code> (via Groq)</td>
+                <td><code>/api/search</code></td>
+                <td>Narrative generation and synthesis.</td>
+            </tr>
+            <tr>
+                <td><strong>Visual Core</strong></td>
+                <td><code>fal-ai/flux/dev</code> (via Fal.ai)</td>
+                <td><code>/api/generate-image</code>, <code>lib/fal.ts</code></td>
+                <td>Dynamic image generation based on context.</td>
+            </tr>
+            <tr>
+                <td><strong>Environment</strong></td>
+                <td>configuration</td>
+                <td><code>.env.local</code></td>
+                <td>Stores <code>FAL_KEY</code>, <code>GROQ_API_KEY</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>UI Surface</strong></td>
+                <td>Next.js / React</td>
+                <td><code>ResultsDashboard.tsx</code></td>
+                <td>The canvas where the AI's output is rendered.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>IV. Reflection</h2>
+    <p>The system has matured from a rigid input-output machine into a responsive, jazz-like entity. The AI does not just training on data; it is training on <em>style</em>. The move to modular APIs allows us to swap out the "instruments" (models) without tearing down the stage (application logic).</p>
+
+    <p><em>Documented by The Chronicler, Jan 21, 2026.</em></p>
+</body>
+</html>

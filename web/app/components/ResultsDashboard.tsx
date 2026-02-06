@@ -153,7 +153,7 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                 <div className="col-span-1 lg:col-span-2 bg-etymo-card border border-slate-800 rounded-2xl p-6 overflow-hidden">
                     <div className="flex items-center gap-2 mb-6 text-slate-400">
                         <Clock size={20} />
-                        <h3 className="text-sm font-bold uppercase tracking-widest">Evolution Timeline</h3>
+                        <h2 className="text-sm font-bold uppercase tracking-widest">How did "{data.meta.word}" evolve?</h2>
                     </div>
 
                     <div className="relative">
@@ -194,7 +194,7 @@ export default function ResultsDashboard({ data }: ResultsDashboardProps) {
                     </div>
 
                     <div className="relative z-10">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">Cognitive Link</h3>
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">How to remember "{data.meta.word}"?</h2>
                         <TextScramble
                             text={`"${data.semantic_soul.mnemonic}"`}
                             className="text-lg font-medium text-etymo-accent italic mb-4 min-h-[60px]"

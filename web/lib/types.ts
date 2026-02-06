@@ -49,6 +49,7 @@ export interface CledorResponse {
         };
         historical_image?: string; // Result from SerpApi
         generated_image?: string; // Result from Fal
+        pinecone_retrieved_image?: string; // Result from RAG
     };
 }
 
