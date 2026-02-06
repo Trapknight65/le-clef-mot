@@ -58,12 +58,12 @@ export default function MethodologyPage() {
 
                     <div className="space-y-4 font-mono text-sm">
                         <div className="flex items-center gap-4">
-                            <span className="text-emerald-400 w-24">INPUT >></span>
+                            <span className="text-emerald-400 w-24">INPUT &gt;&gt;</span>
                             <div className="bg-slate-950 px-4 py-2 rounded border border-slate-800 text-white">User queries "Amour"</div>
                         </div>
                         <div className="h-6 w-px bg-slate-700 ml-[6.5rem]"></div>
                         <div className="flex items-center gap-4">
-                            <span className="text-cyan-400 w-24">PROCESS >></span>
+                            <span className="text-cyan-400 w-24">PROCESS &gt;&gt;</span>
                             <div className="bg-slate-950 px-4 py-2 rounded border border-slate-800 text-white flex-1">
                                 <span className="text-slate-500">// Parallel Execution</span><br />
                                 1. Fetch Etymology Data (External Dictionary API, if avail)<br />
@@ -74,7 +74,7 @@ export default function MethodologyPage() {
                         </div>
                         <div className="h-6 w-px bg-slate-700 ml-[6.5rem]"></div>
                         <div className="flex items-center gap-4">
-                            <span className="text-purple-400 w-24">RENDER >></span>
+                            <span className="text-purple-400 w-24">RENDER &gt;&gt;</span>
                             <div className="bg-slate-950 px-4 py-2 rounded border border-slate-800 text-white">Cinematic Dashboard (Next.js)</div>
                         </div>
                     </div>
