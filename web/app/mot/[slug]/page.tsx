@@ -6,6 +6,8 @@ import { getCachedWord, saveWordToCache } from '@/lib/store';
 import ResultsDashboard from '@/app/components/ResultsDashboard';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import LanguageToggle from '@/app/components/LanguageToggle';
+import Header from '@/app/components/Header';
 
 interface PageProps {
     params: Promise<{
@@ -88,21 +90,13 @@ export default async function WordPage(props: PageProps) {
     };
 
     return (
-        <main className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+        <main className="min-h-screen text-text-primary flex flex-col font-sans">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             {/* Sticky Nav for deep pages */}
-            <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 p-4">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-                        <ArrowLeft size={18} />
-                        <span className="font-bold text-sm uppercase tracking-wider">Back to Search</span>
-                    </Link>
-                    <span className="font-serif font-bold text-lg text-white">Le Mot Clef</span>
-                </div>
-            </nav>
+            <Header variant="sticky" backLink={{ href: '/', type: 'search' }} />
 
             <div className="flex-grow">
                 <ResultsDashboard data={data} />

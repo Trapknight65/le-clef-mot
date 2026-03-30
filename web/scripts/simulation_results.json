@@ -1,0 +1,309 @@
+{
+  "meta": {
+    "timestamp": "2026-03-06T05:58:46.803Z",
+    "api_base": "http://localhost:3001",
+    "total_words": 5,
+    "successful": 5,
+    "failed": 0,
+    "success_rate": "100%",
+    "avg_latency_ms": 5055,
+    "total_duration_ms": 25274
+  },
+  "results": [
+    {
+      "word": "Lumière",
+      "status": "success",
+      "latency_ms": 7737,
+      "data": {
+        "meta": {
+          "word": "Lumière",
+          "ipa": "lym.jɛʁ",
+          "part_of_speech": "Noun"
+        },
+        "root_analysis": {
+          "root": "Proto-Indo-European *leuk-",
+          "original_meaning": "To shine, be bright",
+          "concept": "Light, Radiance"
+        },
+        "narrative_chronology": [
+          {
+            "era": "Ancient Times",
+            "form": "*leuk-",
+            "meaning": "To shine, be bright",
+            "story": "In the dawn of Proto-Indo-European speaking cultures, the word *leuk- represented the spark of life, the warmth of fire, and the glow of celestial bodies. It was a concept that wove together the threads of daily existence, from the sacred rituals performed under the radiant sun to the communal gatherings around the flickering flames of a fire pit."
+          },
+          {
+            "era": "Latin Influence / 12th Century",
+            "form": "Lumen",
+            "meaning": "Light, understanding",
+            "story": "As Latin's shadow fell across the linguistic landscape, *leuk- evolved into 'lumen', encapsulating not just physical light but also the enlightenment of knowledge. In medieval scriptoriums, monks meticulously copied manuscripts by the soft glow of candlelight, symbolizing the spread of understanding and the luminescence of insight."
+          },
+          {
+            "era": "Modern Day",
+            "form": "Lumière",
+            "meaning": "Light, illumination",
+            "story": "Today, 'lumière' illuminates not just our physical surroundings but also our metaphorical journeys. From the soft luminescence of a digital screen to the blinding glare of a fashion photoshoot, 'lumière' is woven into the fabric of our daily lives, a testament to humanity's enduring quest for enlightenment and beauty."
+          }
+        ],
+        "semantic_soul": {
+          "description": "Radiance of understanding",
+          "mnemonic": "Lumière is to Illumination as leuk- is to Spark"
+        },
+        "visual_prompt": "Generate an image in the style of a medieval manuscript illustration, depicting a monk sitting in a dimly lit scriptorium, surrounded by candles and parchment, with a look of enlightenment on his face as he writes the word 'lumen' in bold, golden letters. The scene should evoke a sense of reverence and the pursuit of knowledge. Incorporate intricate Gothic architectural details and the warm, earthy tones of aged parchment and candle wax. Style: Inspired by the Lindisfarne Gospels.",
+        "image_url": "/placeholder.jpg",
+        "image_query": "Visual representation of \"Lumière\"",
+        "cora": {
+          "curator_comment": "Visual generation unavailable",
+          "flux_generation": {
+            "concept": "Historical Etymology Illustration",
+            "prompt": "Visual representation of \"Lumière\"",
+            "aspect_ratio": "16:9"
+          },
+          "serp_search": {
+            "intent": "Historical Context",
+            "queries": [
+              "etymology of Lumière visual"
+            ]
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "word": "Silence",
+      "status": "success",
+      "latency_ms": 4157,
+      "data": {
+        "meta": {
+          "word": "Silence",
+          "ipa": "/sisɑ̃s/",
+          "part_of_speech": "Noun"
+        },
+        "root_analysis": {
+          "root": "Latin: silentium",
+          "original_meaning": "a being silent",
+          "concept": "Stillness"
+        },
+        "narrative_chronology": [
+          {
+            "era": "Ancient Times",
+            "form": "silentium",
+            "meaning": "the state of being silent",
+            "story": "In the quiet hours of a Roman evening, as the hustle of the day subsided, citizens would gather in the atrium, surrounded by the gentle sound of water features, to practice silent contemplation. It was in these moments that the concept of silence was cherished, not just as the absence of noise, but as a state of mind."
+          },
+          {
+            "era": "Middle Ages",
+            "form": "silence",
+            "meaning": "absence of sound or noise",
+            "story": "As monasteries began to dot the European landscape, the concept of silence evolved. Monks would observe periods of silence, using hand gestures to communicate, emphasizing the importance of quiet reflection in spiritual growth. The idea of silence as a discipline, rather than just a natural state, began to take root."
+          },
+          {
+            "era": "Modern Day",
+            "form": "silence",
+            "meaning": "the state or condition of being silent",
+            "story": "Today, in a world where noise is ever-present, the value of silence is perhaps more appreciated than ever. From mindfulness practices to the simple act of turning off one's phone, individuals seek silence as a refuge, a space for introspection and rejuvenation."
+          }
+        ],
+        "semantic_soul": {
+          "description": "Stillness in motion.",
+          "mnemonic": "Silence is to Stillness as Water is to Reflection"
+        },
+        "visual_prompt": "Generate an image in the style of a Romantic-era painting, depicting a serene Roman atrium at dusk. The sky is painted with hues of orange and pink, casting a warm glow over the tranquil scene. A few figures are seated or standing, engaged in silent contemplation, surrounded by lush greenery and the soft sound of a fountain. Incorporate subtle, golden lighting to emphasize the peaceful atmosphere, as if the very essence of silence has been distilled into this moment. Style: reminiscent of J.M.W. Turner's landscapes, with an emphasis on capturing light and mood.",
+        "image_url": "/placeholder.jpg",
+        "image_query": "Visual representation of \"Silence\"",
+        "cora": {
+          "curator_comment": "Visual generation unavailable",
+          "flux_generation": {
+            "concept": "Historical Etymology Illustration",
+            "prompt": "Visual representation of \"Silence\"",
+            "aspect_ratio": "16:9"
+          },
+          "serp_search": {
+            "intent": "Historical Context",
+            "queries": [
+              "etymology of Silence visual"
+            ]
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "word": "Liberté",
+      "status": "success",
+      "latency_ms": 5209,
+      "data": {
+        "meta": {
+          "word": "Liberté",
+          "ipa": "li.bɛʁ.te",
+          "part_of_speech": "Noun"
+        },
+        "root_analysis": {
+          "root": "Latin: libertas",
+          "original_meaning": "state of being free",
+          "concept": "Freedom"
+        },
+        "narrative_chronology": [
+          {
+            "era": "Ancient Times",
+            "form": "libertas",
+            "meaning": "freedom from restraint",
+            "story": "In the bustling streets of Rome, a slave's dream of libertas meant the chance to walk free, unshackled by the chains of bondage. As they passed by the Temple of Jupiter, they'd whisper a prayer for the gift of freedom, a state so revered it was personified as a goddess."
+          },
+          {
+            "era": "12th Century",
+            "form": "liberté",
+            "meaning": "exemption from customary obligations",
+            "story": "In medieval France, the notion of liberté evolved to signify not just physical freedom but also exemption from feudal duties. A lord might grant a peasant liberté from certain taxes or services, allowing them to till their land without the burden of obligation, their labor now a testament to their own autonomy."
+          },
+          {
+            "era": "Modern Day",
+            "form": "liberté",
+            "meaning": "the state of being free to act and make decisions",
+            "story": "Today, liberté is invoked in protests and revolutions, a rallying cry for those seeking the freedom to live their lives as they choose. Whether in the arts, politics, or personal relationships, the concept of liberté embodies the human desire for self-expression and autonomy, a beacon of hope in the pursuit of happiness."
+          }
+        ],
+        "semantic_soul": {
+          "description": "Freedom's timeless cry",
+          "mnemonic": "Liberté is to Autonomy as Libertas is to Unshackled Chains"
+        },
+        "visual_prompt": "Create a neoclassical scene in the style of Jacques-Louis David, set in ancient Rome, depicting the Goddess of Liberty standing atop a pedestal, surrounded by broken chains and shackles, with the Roman Forum in the background, illuminated by a warm, golden sunlight. The goddess should be adorned in a flowing white toga, her right arm outstretched, holding a torch aloft, symbolizing the enlightenment and freedom that libertas embodies.",
+        "image_url": "/placeholder.jpg",
+        "image_query": "Visual representation of \"Liberté\"",
+        "cora": {
+          "curator_comment": "Visual generation unavailable",
+          "flux_generation": {
+            "concept": "Historical Etymology Illustration",
+            "prompt": "Visual representation of \"Liberté\"",
+            "aspect_ratio": "16:9"
+          },
+          "serp_search": {
+            "intent": "Historical Context",
+            "queries": [
+              "etymology of Liberté visual"
+            ]
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "word": "Travail",
+      "status": "success",
+      "latency_ms": 4059,
+      "data": {
+        "meta": {
+          "word": "Travail",
+          "ipa": "tʁa.vaj",
+          "part_of_speech": "Noun"
+        },
+        "root_analysis": {
+          "root": "tripalium",
+          "original_meaning": "three-staked instrument of torture",
+          "concept": "Endurance, Suffering"
+        },
+        "narrative_chronology": [
+          {
+            "era": "Ancient Times",
+            "form": "tripalium",
+            "meaning": "Instrument of torture",
+            "story": "In the scorching desert landscapes of ancient civilizations, the tripalium stood as a symbol of suffering and endurance. It was an instrument used to punish and torment, its three stakes a stark reminder of the hardships faced by those who crossed the authorities. As the sun beat down, the cries of the afflicted echoed through the land, a haunting melody that would eventually shape the concept of travail."
+          },
+          {
+            "era": "Middle Ages (12th Century)",
+            "form": "travail",
+            "meaning": "Painful or laborious effort",
+            "story": "As the centuries passed, the concept of travail evolved. In the rolling hills and bustling towns of medieval Europe, travail came to signify the tedious and backbreaking labor that defined the lives of peasants and artisans. The story of travail shifted from one of torture to one of toil, as people struggled to eke out a living from the land. The memory of the tripalium's stakes still lingered, but now it represented the hardships faced by those who tilled the soil and crafted the very fabric of society."
+          },
+          {
+            "era": "Modern Day",
+            "form": "travail",
+            "meaning": "Work, especially hard or exhausting work",
+            "story": "Today, travail is a word that resonates with people from all walks of life. Whether it's the exhausting grind of a 9-to-5 job, the grueling training regimen of an athlete, or the painstaking creative process of an artist, travail has become synonymous with hard work and dedication. As we navigate the complexities of our modern world, the concept of travail remains a testament to the human spirit's capacity for endurance and perseverance."
+          }
+        ],
+        "semantic_soul": {
+          "description": "Enduring hardship, forging strength",
+          "mnemonic": "Travail is to Hard Work as Tripalium is to Torture Stake"
+        },
+        "visual_prompt": "Create an oil painting in the style of Caravaggio, depicting a ancient scene where a person is tied to a tripalium, set against a backdrop of a desert landscape at sunset. The colors should be muted, with an emphasis on earthy tones and dramatic lighting. The atmosphere should be one of solemnity and contemplation, inviting the viewer to reflect on the origins of the word 'travail'.",
+        "image_url": "/placeholder.jpg",
+        "image_query": "Visual representation of \"Travail\"",
+        "cora": {
+          "curator_comment": "Visual generation unavailable",
+          "flux_generation": {
+            "concept": "Historical Etymology Illustration",
+            "prompt": "Visual representation of \"Travail\"",
+            "aspect_ratio": "16:9"
+          },
+          "serp_search": {
+            "intent": "Historical Context",
+            "queries": [
+              "etymology of Travail visual"
+            ]
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "word": "Amour",
+      "status": "success",
+      "latency_ms": 4112,
+      "data": {
+        "meta": {
+          "word": "Amour",
+          "ipa": "/a.muʁ/",
+          "part_of_speech": "Noun"
+        },
+        "root_analysis": {
+          "root": "Latin: Amor, derived from Proto-Indo-European (PIE) *h₂em- ('to capture' or 'to bind')",
+          "original_meaning": "Love, affection, or desire, initially conveying a strong, often possessive attachment",
+          "concept": "Binding or attachment, reflecting the idea of being tied to someone or something"
+        },
+        "narrative_chronology": [
+          {
+            "era": "Ancient Times",
+            "form": "Amor (Latin)",
+            "meaning": "Passionate love, often associated with the Roman god of love, Cupid",
+            "story": "In ancient Rome, 'amor' was not just a feeling but a force that could dominate one's life, as seen in the stories of passionate love and tragic fate, like that of Venus and Adonis, where love was a powerful, all-consuming bond."
+          },
+          {
+            "era": "12th Century, Medieval Period",
+            "form": "Amour",
+            "meaning": "Courtly love, emphasizing chivalry and adoration",
+            "story": "As the concept of courtly love spread, 'amour' became synonymous with the ideals of valor, loyalty, and selfless devotion, as knights would dedicate themselves to their ladies, exemplifying a refined, noble form of love that transcended mere passion."
+          },
+          {
+            "era": "Modern Day",
+            "form": "Amour",
+            "meaning": "Love, encompassing a broad range of emotions from affection to passion",
+            "story": "Today, 'amour' is used to describe any form of love, from the romantic to the familial, symbolizing a deep emotional connection that can manifest in countless ways, from the excitement of new love to the comfort of long-standing relationships."
+          }
+        ],
+        "semantic_soul": {
+          "description": "Eternal binding of hearts",
+          "mnemonic": "Amour is to love as a bond is to a tie"
+        },
+        "visual_prompt": "Generate an image in the style of Renaissance art, depicting a scene from ancient Rome where Cupid, the god of love, is seen gently binding two lovers together with a floral garland, set against a backdrop of lush gardens and a warm, golden light. Incorporate symbols of ancient Roman architecture and subtle, ethereal wings on Cupid to emphasize the timeless, otherworldly essence of love.",
+        "image_url": "/placeholder.jpg",
+        "image_query": "Visual representation of \"Amour\"",
+        "cora": {
+          "curator_comment": "Visual generation unavailable",
+          "flux_generation": {
+            "concept": "Historical Etymology Illustration",
+            "prompt": "Visual representation of \"Amour\"",
+            "aspect_ratio": "16:9"
+          },
+          "serp_search": {
+            "intent": "Historical Context",
+            "queries": [
+              "etymology of Amour visual"
+            ]
+          }
+        }
+      },
+      "error": null
+    }
+  ]
+}

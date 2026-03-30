@@ -3,5 +3,8 @@
     "private": true,
     "scripts": {
         "vercel-build": "cd web && npm install && npm run build"
+    },
+    "dependencies": {
+        "firebase": "^12.11.0"
     }
 }

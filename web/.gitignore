@@ -41,4 +41,13 @@ yarn-error.log*
 next-env.d.ts
 google-service-account.json
 
-.vercel
+# Development cleanup folders
+.dev-outputs/
+tests/legacy/
+
+# Temporary test files (prevent future clutter)
+test_*.js
+verify_*.js
+*_output.txt
+*_error.txt
+env_temp

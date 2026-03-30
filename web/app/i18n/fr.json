@@ -1,0 +1,202 @@
+{
+    "homepage": {
+        "title": "Le Clef Mot",
+        "subtitle": "Déverrouillez l'âme des mots",
+        "description": "Découvrez le parcours historique des mots français à travers l'étymologie et la narration visuelle",
+        "searchPlaceholder": "Entrez un mot français...",
+        "searchButton": "Explorer",
+        "curated_title": "Parcours Choisis",
+        "features": {
+            "etymology": {
+                "title": "Étymologie Profonde",
+                "description": "Tracez les mots du français moderne au latin, au grec et aux racines proto-indo-européennes"
+            },
+            "visual": {
+                "title": "Narration Visuelle",
+                "description": "Des illustrations historiques générées par IA donnent vie à l'étymologie"
+            },
+            "narrative": {
+                "title": "Chronologie Narrative",
+                "description": "Comprenez comment les significations ont évolué à travers différentes époques"
+            }
+        }
+    },
+    "nav": {
+        "home": "Accueil",
+        "about": "À Propos",
+        "methodology": "Méthodologie",
+        "privacy": "Confidentialité",
+        "backToSearch": "Retour à la recherche",
+        "back": "Retour"
+    },
+    "footer": {
+        "copyright": "© 2026 Allan Deschamps — Redbrush Agency. Tous droits réservés.",
+        "privacy": "Politique de Confidentialité",
+        "methodology": "Méthodologie"
+    },
+    "about": {
+        "title": "À Propos",
+        "subtitle": "Déverrouillez l'âme des mots",
+        "mission": {
+            "title": "Notre Mission",
+            "text": "Le Clef Mot rend l'étymologie accessible et captivante grâce à la puissance de l'intelligence artificielle et de la narration visuelle. Chaque mot possède une histoire riche—un voyage à travers le temps, les cultures et les transformations sémantiques. Notre mission est d'illuminer ces histoires cachées."
+        },
+        "approach": {
+            "title": "Notre Approche",
+            "text": "Nous combinons une analyse linguistique approfondie avec une IA de pointe pour créer des expériences étymologiques immersives. Notre système dual d'agents IA—Cledor l'étymologiste et Cora l'archiviste visuelle—travaille en tandem pour révéler à la fois le parcours sémantique et la représentation visuelle de chaque mot."
+        },
+        "agents": {
+            "title": "Nos Agents IA",
+            "cledor": {
+                "name": "Cledor : L'Étymologiste",
+                "role": "Analyste Historique",
+                "description": "Cledor retrace les origines des mots du français moderne jusqu'aux racines anciennes (latin, grec, proto-indo-européen), analysant les changements sémantiques à travers les époques historiques."
+            },
+            "cora": {
+                "name": "Cora : L'Archiviste Visuelle",
+                "role": "Génération & Archivage",
+                "description": "Cora transforme l'histoire linguistique en récits visuels. Elle génère des illustrations historiquement précises ou récupère des artefacts pertinents de musées."
+            }
+        },
+        "team": {
+            "title": "L'Équipe",
+            "text": "Créé par Allan Deschamps et Redbrush Agency, Le Clef Mot fusionne expertise linguistique et innovation IA."
+        },
+        "cta": "Commencer l'exploration",
+        "back": "Retour",
+        "badge": "La Chronique"
+    },
+    "methodology": {
+        "title": "Méthodologie",
+        "subtitle": "Comment nous déverrouillons l'âme des mots",
+        "intro": "Le Clef Mot utilise un pipeline à deux agents IA pour transformer des simples requêtes de mots en expériences étymologiques immersives.",
+        "workflow": {
+            "title": "Le Flux de Travail",
+            "steps": [
+                {
+                    "number": "01",
+                    "title": "Analyse Étymologique",
+                    "agent": "Cledor (L'Étymologiste)",
+                    "description": "Cledor reçoit le mot et commence l'analyse historique profonde.",
+                    "details": [
+                        "Retrace du français moderne → latin/grec → proto-indo-européen",
+                        "Identifie les racines et les concepts originaux",
+                        "Analyse les changements sémantiques à travers les époques",
+                        "Génère une chronologie narrative de l'évolution du mot",
+                        "Crée un prompt visuel inspiré des textes/scènes historiques"
+                    ]
+                },
+                {
+                    "number": "02",
+                    "title": "Génération Visuelle",
+                    "agent": "Cora (L'Archiviste Visuelle)",
+                    "description": "Cora prend le prompt visuel de Cledor et exécute la génération d'image.",
+                    "details": [
+                        "Reçoit le prompt visuel raffiné de Cledor",
+                        "Tente la génération via FLUX (illustrations historiques)",
+                        "En cas d'erreur 402 → fallback vers l'archive RAG",
+                        "Recherche des artefacts pertinents dans les archives de musées",
+                        "Retourne l'image avec métadonnées (source, tags, prompt)"
+                    ]
+                },
+                {
+                    "number": "03",
+                    "title": "Assemblage Final",
+                    "agent": "ResultsDashboard",
+                    "description": "Les résultats de Cledor et Cora sont combinés pour créer l'expérience finale.",
+                    "details": [
+                        "Affiche l'image générée/archivée",
+                        "Présente l'analyse étymologique complète",
+                        "Montre la chronologie narrative",
+                        "Fournit les métadonnées (racine, signification originale)",
+                        "Ajoute le tag source (generated vs archive)"
+                    ]
+                }
+            ]
+        },
+        "tech": {
+            "title": "Stack Technique",
+            "items": [
+                {
+                    "name": "Groq/Llama 3.3",
+                    "role": "LLM pour l'analyse étymologique (Cledor)"
+                },
+                {
+                    "name": "FLUX (via Fal.ai)",
+                    "role": "Génération d'images historiques (Cora)"
+                },
+                {
+                    "name": "ChromaDB",
+                    "role": "Recherche d'archives visuelles (RAG fallback)"
+                },
+                {
+                    "name": "Pinecone",
+                    "role": "Recherche contextuelle pour enrichissement"
+                },
+                {
+                    "name": "Next.js 16",
+                    "role": "Framework frontend réactif"
+                },
+                {
+                    "name": "FastAPI",
+                    "role": "Backend Cora API"
+                }
+            ]
+        },
+        "principles": {
+            "title": "Principes de Conception",
+            "items": [
+                "Séparation des préoccupations : Cledor = sémantique, Cora = visuel",
+                "Dégradation gracieuse : fallbacks RAG multiples",
+                "Précision historique : prompts contextualisés, artefacts authentiques",
+                "Analyse approfondie : racines PIE, changements sémantiques, récits culturels",
+                "Excellence visuelle : esthétique néon, animations fluides, typographie premium"
+            ]
+        },
+        "cta": "Essayer maintenant",
+        "back": "Retour",
+        "badge": "Le Système"
+    },
+    "dashboard": {
+        "etymologicalAnalysis": "Analyse Étymologique",
+        "historicalTimeline": "Chronologie Historique",
+        "visualArtifact": "Artefact Visuel",
+        "generatedByCora": "Généré par Cora",
+        "archivalImage": "Image d'Archives",
+        "root": "Racine",
+        "originalMeaning": "Signification Originale",
+        "culturalContext": "Contexte Culturel",
+        "evolution": "Évolution",
+        "source": "Source",
+        "evolutionTitle": "Comment \"{{word}}\" a-t-il évolué ?",
+        "mnemonicTitle": "Comment retenir \"{{word}}\" ?",
+        "videoButton": {
+            "idle": "Générer une Vidéo Virale",
+            "loading": "Calcul du Script...",
+            "ready": "Regarder la Vidéo ci-dessous ↓"
+        },
+        "cora": {
+            "label": "Cora (Archiviste Visuelle)",
+            "idle": "État du Système : Inactif",
+            "noPrompt": "Aucun prompt visuel reçu.",
+            "sequenceNotInitiated": "Séquence de génération non initiée.",
+            "unavailable": "Archive Cora Indisponible"
+        },
+        "pos": {
+            "noun": "Nom",
+            "verb": "Verbe",
+            "adjective": "Adjectif",
+            "adverb": "Adverbe",
+            "preposition": "Préposition",
+            "conjunction": "Conjonction",
+            "interjection": "Interjection",
+            "pronoun": "Pronom"
+        },
+        "concept": "Concept : ",
+        "eras": {
+            "ancient": "Antiquité / Racines",
+            "middle_ages": "Moyen Âge",
+            "modern": "Époque Moderne"
+        }
+    }
+}

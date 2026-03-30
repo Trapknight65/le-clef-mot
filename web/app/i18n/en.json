@@ -1,0 +1,202 @@
+{
+    "homepage": {
+        "title": "Le Clef Mot",
+        "subtitle": "Unlock the soul of words",
+        "description": "Discover the historical journey of French words through etymology and visual storytelling",
+        "searchPlaceholder": "Enter a French word...",
+        "searchButton": "Explore",
+        "curated_title": "Curated Journeys",
+        "features": {
+            "etymology": {
+                "title": "Deep Etymology",
+                "description": "Trace words from modern French to Latin, Greek, and Proto-Indo-European roots"
+            },
+            "visual": {
+                "title": "Visual Storytelling",
+                "description": "AI-generated historical illustrations bring etymology to life"
+            },
+            "narrative": {
+                "title": "Narrative Chronology",
+                "description": "Understand how meanings evolved across different eras"
+            }
+        }
+    },
+    "nav": {
+        "home": "Home",
+        "about": "About",
+        "methodology": "Methodology",
+        "privacy": "Privacy",
+        "backToSearch": "Back to Search",
+        "back": "Back"
+    },
+    "footer": {
+        "copyright": "© 2026 Allan Deschamps — Redbrush Agency. All rights reserved.",
+        "privacy": "Privacy Policy",
+        "methodology": "Methodology"
+    },
+    "about": {
+        "title": "About",
+        "subtitle": "Unlock the soul of words",
+        "mission": {
+            "title": "Our Mission",
+            "text": "Le Clef Mot makes etymology accessible and engaging through the power of AI and visual storytelling. Every word has a rich history—a journey through time, cultures, and semantic transformations."
+        },
+        "approach": {
+            "title": "Our Approach",
+            "text": "We combine deep linguistic analysis with cutting-edge AI to create immersive etymology experiences. Our dual-agent AI system—Cledor the etymologist and Cora the visual archivist—works in tandem."
+        },
+        "agents": {
+            "title": "Our AI Agents",
+            "cledor": {
+                "name": "Cledor: The Etymologist",
+                "role": "Historical Analyst",
+                "description": "Cledor traces word origins from modern French back to ancient roots, analyzing semantic shifts across historical eras."
+            },
+            "cora": {
+                "name": "Cora: The Visual Archivist",
+                "role": "Visual Generation & Archival",
+                "description": "Cora transforms linguistic history into visual narratives, generating historically-accurate illustrations or retrieving museum artifacts."
+            }
+        },
+        "team": {
+            "title": "The Team",
+            "text": "Created by Allan Deschamps and Redbrush Agency, Le Clef Mot merges linguistic expertise with AI innovation."
+        },
+        "cta": "Start Exploring",
+        "back": "Back",
+        "badge": "The Chronicle"
+    },
+    "methodology": {
+        "title": "Methodology",
+        "subtitle": "How we unlock the soul of words",
+        "intro": "Le Clef Mot uses a two-agent AI pipeline to transform simple word queries into immersive etymological experiences.",
+        "workflow": {
+            "title": "The Workflow",
+            "steps": [
+                {
+                    "number": "01",
+                    "title": "Etymological Analysis",
+                    "agent": "Cledor (The Etymologist)",
+                    "description": "Cledor receives the word and begins deep historical analysis.",
+                    "details": [
+                        "Traces modern French → Latin/Greek → Proto-Indo-European",
+                        "Identifies roots and original concepts",
+                        "Analyzes semantic shifts across eras",
+                        "Generates narrative chronology of word evolution",
+                        "Creates visual prompt inspired by historical texts/scenes"
+                    ]
+                },
+                {
+                    "number": "02",
+                    "title": "Visual Generation",
+                    "agent": "Cora (The Visual Archivist)",
+                    "description": "Cora takes Cledor's visual prompt and executes image generation.",
+                    "details": [
+                        "Receives refined visual prompt from Cledor",
+                        "Attempts generation via FLUX (historical illustrations)",
+                        "On 402 error → fallback to RAG archive",
+                        "Searches for relevant artifacts in museum archives",
+                        "Returns image with metadata (source, tags, prompt)"
+                    ]
+                },
+                {
+                    "number": "03",
+                    "title": "Final Assembly",
+                    "agent": "ResultsDashboard",
+                    "description": "Cledor and Cora results are combined to create the final experience.",
+                    "details": [
+                        "Displays generated/archived image",
+                        "Presents complete etymological analysis",
+                        "Shows narrative chronology",
+                        "Provides metadata (root, original meaning)",
+                        "Adds source tag (generated vs archive)"
+                    ]
+                }
+            ]
+        },
+        "tech": {
+            "title": "Tech Stack",
+            "items": [
+                {
+                    "name": "Groq/Llama 3.3",
+                    "role": "LLM for etymological analysis (Cledor)"
+                },
+                {
+                    "name": "FLUX (via Fal.ai)",
+                    "role": "Historical image generation (Cora)"
+                },
+                {
+                    "name": "ChromaDB",
+                    "role": "Visual archive search (RAG fallback)"
+                },
+                {
+                    "name": "Pinecone",
+                    "role": "Contextual search for enrichment"
+                },
+                {
+                    "name": "Next.js 16",
+                    "role": "Responsive frontend framework"
+                },
+                {
+                    "name": "FastAPI",
+                    "role": "Cora API backend"
+                }
+            ]
+        },
+        "principles": {
+            "title": "Design Principles",
+            "items": [
+                "Separation of concerns: Cledor = semantic, Cora = visual",
+                "Graceful degradation: multiple RAG fallbacks",
+                "Historical accuracy: contextualized prompts, authentic artifacts",
+                "Deep analysis: PIE roots, semantic shifts, cultural narratives",
+                "Visual excellence: neon aesthetics, smooth animations, premium typography"
+            ]
+        },
+        "cta": "Try it now",
+        "back": "Back",
+        "badge": "The System"
+    },
+    "dashboard": {
+        "etymologicalAnalysis": "Etymological Analysis",
+        "historicalTimeline": "Historical Timeline",
+        "visualArtifact": "Visual Artifact",
+        "generatedByCora": "Generated by Cora",
+        "archivalImage": "Archival Image",
+        "root": "Root",
+        "originalMeaning": "Original Meaning",
+        "culturalContext": "Cultural Context",
+        "evolution": "Evolution",
+        "source": "Source",
+        "evolutionTitle": "How did \"{{word}}\" evolve?",
+        "mnemonicTitle": "How to remember \"{{word}}\"?",
+        "videoButton": {
+            "idle": "Generate Viral Video",
+            "loading": "Computing Script...",
+            "ready": "Watch Video Below ↓"
+        },
+        "cora": {
+            "label": "Cora (Visual Archivist)",
+            "idle": "System Status: Idle",
+            "noPrompt": "No visual prompt received.",
+            "sequenceNotInitiated": "Generation sequence not initiated.",
+            "unavailable": "Cora Archive Unavailable"
+        },
+        "pos": {
+            "noun": "Noun",
+            "verb": "Verb",
+            "adjective": "Adjective",
+            "adverb": "Adverb",
+            "preposition": "Preposition",
+            "conjunction": "Conjunction",
+            "interjection": "Interjection",
+            "pronoun": "Pronoun"
+        },
+        "concept": "Concept: ",
+        "eras": {
+            "ancient": "Ancient Times",
+            "middle_ages": "Middle Ages",
+            "modern": "Modern Day"
+        }
+    }
+}

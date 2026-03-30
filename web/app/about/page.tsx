@@ -1,121 +1,141 @@
-import React from 'react';
-import { Sparkles, History, Box, Zap } from 'lucide-react';
-import ParticleBackground from '../components/effects/ParticleBackground';
+'use client';
 
-export default function AboutPage() {
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { BookOpen, Brain, Sparkles, Database, History } from 'lucide-react';
+import Link from 'next/link';
+import ParticleBackground from '../components/effects/ParticleBackground';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageToggle from '../components/LanguageToggle';
+import Header from '../components/Header';
+
+export default function About() {
+    const { t, language } = useLanguage();
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+    useEffect(() => {
+        // Detect reduced motion preference
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        setPrefersReducedMotion(mediaQuery.matches);
+        const motionHandler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+        mediaQuery.addEventListener('change', motionHandler);
+
+        return () => {
+            mediaQuery.removeEventListener('change', motionHandler);
+        };
+    }, []);
+
     return (
-        <main className="min-h-screen bg-etymo-bg text-slate-100 font-sans selection:bg-etymo-primary selection:text-white relative overflow-hidden">
+        <main className="min-h-screen bg-bg-navy text-text-primary relative overflow-hidden">
             <ParticleBackground />
 
-            {/* Simple Header */}
-            <div className="relative z-20 p-6 flex items-center justify-between pointer-events-none">
-                <div className="pointer-events-auto">
-                    <a href="/" className="font-bold text-xl tracking-tight text-white flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-etymo-primary to-etymo-accent rounded-lg flex items-center justify-center">
-                            <span className="font-serif">M</span>
-                        </div>
-                    </a>
+            {/* Header */}
+            <Header variant="inner" backLink={{ href: '/', type: 'default' }} />
+
+            {/* Hero */}
+            <section className="relative z-10 py-20 px-6 text-center border-b border-white/10">
+                <div className="max-w-4xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: prefersReducedMotion ? 0.01 : 0.3 }}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel neon-box-cyan text-xs font-medium mb-8"
+                        role="status"
+                        aria-label={t.about.badge}
+                    >
+                        <History size={12} aria-hidden="true" />
+                        <span>{t.about.badge}</span>
+                    </motion.div>
+
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: prefersReducedMotion ? 0.01 : 0.5 }}
+                        className="text-5xl md:text-7xl font-black mb-4 neon-text animate-neon-flicker"
+                    >
+                        {t.about.title}
+                    </motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: prefersReducedMotion ? 0 : 0.2, duration: prefersReducedMotion ? 0.01 : 0.5 }}
+                        className="text-xl text-text-secondary italic"
+                    >
+                        {t.about.subtitle}
+                    </motion.p>
                 </div>
-            </div>
+            </section>
 
-            <div className="relative z-10 container mx-auto px-6 py-20 max-w-4xl">
+            {/* Mission */}
+            <section className="relative z-10 py-16 px-6">
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-3xl font-bold mb-6 neon-text-cyan">{t.about.mission.title}</h2>
+                    <p className="text-lg text-text-secondary leading-relaxed">{t.about.mission.text}</p>
+                </div>
+            </section>
 
-                <div className="text-center mb-24">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-medium text-etymo-accent mb-6">
-                        <History size={12} />
-                        <span>The Chronicle</span>
+            {/* Approach */}
+            <section className="relative z-10 py-16 px-6 bg-bg-midnight/30">
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-3xl font-bold mb-6 neon-text-cyan">{t.about.approach.title}</h2>
+                    <p className="text-lg text-text-secondary leading-relaxed">{t.about.approach.text}</p>
+                </div>
+            </section>
+
+            {/* AI Agents */}
+            <section className="relative z-10 py-16 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <h2 className="text-4xl font-bold mb-12 text-center neon-text">{t.about.agents.title}</h2>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {/* Cledor */}
+                        <motion.div
+                            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+                            className="glass-panel-neon p-8 rounded-xl"
+                        >
+                            <div className="flex items-center gap-3 mb-4">
+                                <Brain className="w-8 h-8 neon-text-cyan" aria-hidden="true" />
+                                <div>
+                                    <h3 className="text-2xl font-bold neon-text-cyan">{t.about.agents.cledor.name}</h3>
+                                    <p className="text-sm text-text-tertiary">{t.about.agents.cledor.role}</p>
+                                </div>
+                            </div>
+                            <p className="text-text-secondary leading-relaxed">{t.about.agents.cledor.description}</p>
+                        </motion.div>
+
+                        {/* Cora */}
+                        <motion.div
+                            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+                            className="glass-panel-neon p-8 rounded-xl"
+                        >
+                            <div className="flex items-center gap-3 mb-4">
+                                <Sparkles className="w-8 h-8 neon-text-magenta" aria-hidden="true" />
+                                <div>
+                                    <h3 className="text-2xl font-bold neon-text-magenta">{t.about.agents.cora.name}</h3>
+                                    <p className="text-sm text-text-tertiary">{t.about.agents.cora.role}</p>
+                                </div>
+                            </div>
+                            <p className="text-text-secondary leading-relaxed">{t.about.agents.cora.description}</p>
+                        </motion.div>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent mb-6">
-                        The Soul of the Machine
-                    </h1>
-                    <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
-                        A cinematic exploration of how we taught a machine to see the history of words.
-                    </p>
                 </div>
+            </section>
 
-                <div className="space-y-24">
-                    {/* Section 1 */}
-                    <section className="relative">
-                        <div className="absolute -left-12 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-500/50 to-transparent hidden md:block"></div>
-                        <div className="absolute -left-[54px] top-0 w-3 h-3 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.8)] hidden md:block"></div>
-
-                        <h2 className="text-3xl font-bold text-white mb-6">In the Beginning, There Was Noise</h2>
-                        <div className="prose prose-invert prose-lg text-slate-300">
-                            <p>
-                                The journey of <strong>Le Mot Clef</strong> began with a simple question: <em>Can AI do more than just answer? Can it feel?</em>
-                            </p>
-                            <p>
-                                Initially, we struggled with friction. The early prototypes (The Bytez Era) were rigid. The models refused to cooperate, hitting walls of "upgrade required" and API limits. It was a machine fighting its operator.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Section 2 */}
-                    <section className="relative">
-                        <div className="absolute -left-12 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/50 to-transparent hidden md:block"></div>
-                        <div className="absolute -left-[54px] top-0 w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(37,99,235,0.8)] hidden md:block"></div>
-
-                        <h2 className="text-3xl font-bold text-white mb-6">The Modulation (The Pivot)</h2>
-                        <div className="prose prose-invert prose-lg text-slate-300">
-                            <p>
-                                On Jan 8, 2026, we stopped fighting. We modulated. We deconstructed the monolith into specialized instruments.
-                            </p>
-                            <ul className="list-none space-y-4 my-6 pl-0">
-                                <li className="flex gap-4 items-start">
-                                    <div className="p-2 rounded bg-slate-800 text-cyan-400"><Box size={18} /></div>
-                                    <div>
-                                        <strong className="text-white">Groq (Llama 3.3)</strong> became our poet. Fast, loose, and lyrical. It handles the narrative.
-                                    </div>
-                                </li>
-                                <li className="flex gap-4 items-start">
-                                    <div className="p-2 rounded bg-slate-800 text-purple-400"><Zap size={18} /></div>
-                                    <div>
-                                        <strong className="text-white">Fal.ai (Flux Dev)</strong> became our painter. Precise, geometric, and visually stunning.
-                                    </div>
-                                </li>
-                            </ul>
-                            <p>
-                                This separation of concerns allowed the system to sing.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Section 3 */}
-                    <section className="relative">
-                        <div className="absolute -left-12 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent hidden md:block"></div>
-                        <div className="absolute -left-[54px] top-0 w-3 h-3 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] hidden md:block"></div>
-
-                        <h2 className="text-3xl font-bold text-white mb-6">The Symphony</h2>
-                        <div className="prose prose-invert prose-lg text-slate-300">
-                            <p>
-                                Today, <strong>Le Mot Clef</strong> is a Visual RAG (Retrieval-Augmented Generation) engine. It doesn't just look up definitions; it retrieves the <em>soul</em> of the word and visualizes it in real-time.
-                            </p>
-                            <p>
-                                From the "diamond geometry" of our video players to the "ghost buttons" of our UI, every pixel is designed to be cinematic. This is not a dictionary. It is a theater.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Section 4 */}
-                    <section className="relative">
-                        <div className="absolute -left-12 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-emerald-500/50 to-transparent hidden md:block"></div>
-                        <div className="absolute -left-[54px] top-0 w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] hidden md:block"></div>
-
-                        <h2 className="text-3xl font-bold text-white mb-6">The Mission: Reclaiming Depth</h2>
-                        <div className="prose prose-invert prose-lg text-slate-300">
-                            <p>
-                                We built this because we realized we had forgotten how to read. In the age of the infinite scroll, we scan. We skim. Words became mere labels, flat and functional.
-                            </p>
-                            <p>
-                                <strong>Le Mot Clef</strong> is an act of resistance against superficiality. We wanted to turn words back into portals. To remind ourselves that a word like <em>"Liberté"</em> or <em>"Mélancolie"</em> is not just a string of letters, but a ruin, a story, and a universe waiting to be explored.
-                            </p>
-                            <p>
-                                We use AI not to summarize the world, but to expand it. To make you stop, look, and feel the weight of the language you speak.
-                            </p>
-                        </div>
-                    </section>
+            {/* Team */}
+            <section className="relative z-10 py-16 px-6 bg-bg-midnight/30">
+                <div className="max-w-4xl mx-auto text-center">
+                    <h2 className="text-3xl font-bold mb-6 neon-text">{t.about.team.title}</h2>
+                    <p className="text-lg text-text-secondary leading-relaxed">{t.about.team.text}</p>
                 </div>
-            </div>
+            </section>
+
+            {/* CTA */}
+            <section className="relative z-10 py-20 px-6 text-center border-t border-white/10">
+                <Link href="/" className="neon-button inline-block active:scale-95 transition-transform" aria-label={t.about.cta}>
+                    <BookOpen className="inline w-5 h-5 mr-2" aria-hidden="true" />
+                    {t.about.cta}
+                </Link>
+            </section>
         </main>
     );
 }

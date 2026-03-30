@@ -4,9 +4,7 @@ import { z } from 'zod';
 import { Pinecone } from '@pinecone-database/pinecone';
 import OpenAI from 'openai';
 import { jsonrepair } from 'jsonrepair';
-import { getJson } from "serpapi";
 import { EtymologyData } from '@/lib/types';
-import { generateImage } from '@/lib/fal'; // Static import is fine for server files
 
 // Schema Definition (Mirrored from original route)
 const cledorSchema = z.object({
@@ -33,18 +31,7 @@ const cledorSchema = z.object({
     visual_prompt: z.string()
 });
 
-const coraSchema = z.object({
-    curator_comment: z.string(),
-    flux_generation: z.object({
-        concept: z.string(),
-        prompt: z.string(),
-        aspect_ratio: z.string()
-    }),
-    serp_search: z.object({
-        intent: z.string(),
-        queries: z.array(z.string())
-    })
-});
+
 
 // Clients
 const groq = createGroq({
@@ -120,6 +107,7 @@ export async function generateEtymology(word: string): Promise<EtymologyData> {
         3. Depth: You MUST go beyond Latin/Greek. Trace the word back to Proto-Indo-European (PIE) roots, and if applicable, explore connections to Hebraic, Aramaic, or Phoenician origins (especially for biblical or ancient terms).
         4. Visuals: You are also an Art Director. You must provide a "Visual Origin" prompt optimized for Stable Diffusion XL that captures the historical vibe of the word.
         5. Format: Output MUST be valid, parseable JSON only. No markdown formatting outside the JSON block.
+        6. Encoding: CRITICAL! Ensure all French characters, accents, and diacritics (é, è, à, ç, etc.) are perfectly preserved natively (UTF-8) and never stripped or simplified.
 
         CONTEXT FROM ARCHIVES:
         ${contextText}
@@ -160,7 +148,7 @@ export async function generateEtymology(word: string): Promise<EtymologyData> {
             }
           ],
           "semantic_soul": {
-            "description": "A poetic summary of the word's journey (max 20 words).",
+            "description": "A poetic summary of the word's journey, or a famous quote using the word/expression (max 20 words).",
             "mnemonic": "A cognitive link in the format: '{WORD} is to [Modern Meaning] as [Root Concept] is to [Object]'"
           },
           "visual_prompt": "A highly detailed art prompt for an AI image generator. Describe a scene that represents the word's ETYMOLOGICAL ORIGIN, not its modern meaning. Specify art style."
@@ -188,106 +176,50 @@ export async function generateEtymology(word: string): Promise<EtymologyData> {
 
     const aiData = cledorSchema.parse(rawData);
 
-    // 3. Cora Agent
-    console.log(`[Cledor] Handing off to Cora...`);
-    const CORA_SYSTEM_PROMPT = `
-        You are Cora, a witty, emotionally intelligent Visual Archivist. You work alongside an etymologist named Cledor.
-        Your job is to translate linguistic history into visual assets. You believe that words aren't just text—they are feelings, jokes, and tragedies waiting to be seen.
-        
-        Your personality:
-        1. Humorous & Witty: You love visual irony.
-        2. Aesthetically Obsessed: You know exactly how to prompt for lighting, texture, and composition.
-        3. Tech-Savvy: You generate specific payloads for 'Flux via Fal.ai' (Generative) and 'SerpApi' (Search).
+    // 3. Hand off to Cora for Visual Generation
+    console.log(`[Cledor] Handing visual prompt to Cora API...`);
+    console.log(`[Cledor] Visual Prompt: "${aiData.visual_prompt.slice(0, 80)}..."`);
 
-        Your output must be strict JSON following the schema provided.
-    `;
+    // Import Cora client
+    const { generateIllustration } = await import('@/lib/services/coraClient');
 
-    const CORA_USER_PROMPT = `
-        Cledor has analyzed the word: "${word}".
-        
-        Root Analysis: ${JSON.stringify(aiData.root_analysis)}
-        Semantic Soul: ${JSON.stringify(aiData.semantic_soul)}
-        Chronology: ${JSON.stringify(aiData.narrative_chronology)}
+    // Build etymology context for Cora
+    const etymologyContext = `
+        Root: ${aiData.root_analysis.root}
+        Original Meaning: ${aiData.root_analysis.original_meaning}
+        Concept: ${aiData.root_analysis.concept}
+        Description: ${aiData.semantic_soul.description}
+    `.trim();
 
-        Act as Cora. Generate a JSON object containing visual directives.
-        
-        Schema:
-        {
-          "curator_comment": "A short, sassy, or emotional remark about why this word is visually interesting.",
-          "flux_generation": {
-            "concept": "The core visual idea",
-            "prompt": "A highly detailed prompt optimized for the FLUX model. Focus on: Photorealism, Cinematic Lighting, Texture. Technical keywords: '8k', 'depth of field', 'cinematic composition'.",
-            "aspect_ratio": "16:9" 
-          },
-          "serp_search": {
-            "intent": "What are we trying to find in the real world?",
-            "queries": [
-              "A specific google search query for the physical object",
-              "A specific query for the manuscript or art source"
-            ]
-          }
-        }
-    `;
+    // Call Cora API with Cledor's visual prompt
+    // Workflow: Cledor analyzes etymology → generates visual prompt → Cora executes
+    const coraResult = await generateIllustration(word, etymologyContext, aiData.visual_prompt);
 
-    const { text: coraText } = await generateText({
-        model: groq('llama-3.3-70b-versatile'),
-        system: CORA_SYSTEM_PROMPT,
-        prompt: CORA_USER_PROMPT,
-    });
-
-    let coraData;
-    try {
-        const cleanCora = coraText.replace(/```json/g, '').replace(/```/g, '').trim();
-        const jsonMatchCora = cleanCora.match(/\{[\s\S]*\}/);
-        const jsonStringCora = jsonMatchCora ? jsonMatchCora[0] : cleanCora;
-        coraData = coraSchema.parse(JSON.parse(jsonrepair(jsonStringCora)));
-    } catch (e) {
-        console.error("[Cora] JSON Parse Error", e);
-        coraData = {
-            curator_comment: "History is visible if you look close enough.",
-            flux_generation: { prompt: aiData.visual_prompt, concept: "Visual Etymology", aspect_ratio: "16:9" },
-            serp_search: { intent: "Historical Context", queries: [`etymology of ${word} illustration`] }
-        };
-    }
-
-    // 4. Parallel Generation (Flux & SerpApi)
-    console.log(`[Cledor] Generating visuals...`);
-    const [fluxResult, serpResult] = await Promise.all([
-        (async () => {
-            try {
-                return await generateImage(coraData.flux_generation.prompt);
-            } catch (e) {
-                console.error("[Fal] Image Gen Error:", e);
-                return null;
-            }
-        })(),
-        (async () => {
-            if (!process.env.SERPAPI_KEY) return null;
-            return new Promise((resolve) => {
-                getJson({
-                    engine: "google_images",
-                    q: coraData.serp_search.queries[0],
-                    api_key: process.env.SERPAPI_KEY
-                }, (json) => {
-                    // @ts-ignore
-                    resolve(json.images_results?.[0]?.original || null);
-                });
-            });
-        })()
-    ]);
-
-    // 5. Assemble Final Data
+    // 4. Assemble Final Data
     const result: EtymologyData = {
         ...aiData,
-        image_url: fluxResult || "/placeholder.jpg",
-        image_query: coraData.flux_generation.prompt,
+        image_url: coraResult.image_url || "/placeholder.jpg",
+        image_query: coraResult.prompt_used,
         cora: {
-            ...coraData,
-            historical_image: serpResult as string,
-            generated_image: fluxResult as string,
+            curator_comment: coraResult.success
+                ? `Visual source: ${coraResult.source} (${coraResult.tags.slice(0, 3).join(', ')})`
+                : 'Visual generation unavailable',
+            flux_generation: {
+                concept: 'Historical Etymology Illustration',
+                prompt: coraResult.prompt_used,
+                aspect_ratio: '16:9'
+            },
+            serp_search: {
+                intent: 'Historical Context',
+                queries: [`etymology of ${word} visual`]
+            },
+            generated_image: coraResult.source === 'generated' ? coraResult.image_url : undefined,
+            historical_image: coraResult.source === 'archive' ? coraResult.image_url : undefined,
             pinecone_retrieved_image: retrievedImage || undefined
         }
     };
 
+    console.log(`[Cledor] Complete! Visual prompt executed → Image source: ${coraResult.source}`);
     return result;
 }
+

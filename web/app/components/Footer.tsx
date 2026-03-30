@@ -5,17 +5,35 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="relative z-20 w-full py-8 text-center text-sm text-slate-600 backdrop-blur-sm border-t border-white/5 bg-slate-900/50">
+        <footer className="relative z-20 w-full py-8 text-center text-sm text-text-tertiary backdrop-blur-sm border-t border-white/10 bg-bg-midnight/50" role="contentinfo">
             <div className="container mx-auto px-4">
-                <div className="mb-4 flex justify-center gap-6">
-                    <Link href="/about" className="hover:text-etymo-accent transition-colors">About</Link>
-                    <Link href="/methodology" className="hover:text-etymo-accent transition-colors">Methodology</Link>
-                    <Link href="/privacy" className="hover:text-etymo-accent transition-colors">Privacy</Link>
-                </div>
-                <p className="font-medium">
-                    &copy; {currentYear} <span className="text-slate-400">Allan Deschamps</span> & <span className="text-slate-400">Redbrush Agency</span>.
+                <nav className="mb-4 flex justify-center gap-8" aria-label="Footer navigation">
+                    <Link
+                        href="/about"
+                        className="hover:text-neon-cyan active:opacity-70 transition-all hover:underline underline-offset-4"
+                        aria-label="Learn about Le Clef Mot"
+                    >
+                        About
+                    </Link>
+                    <Link
+                        href="/methodology"
+                        className="hover:text-neon-cyan active:opacity-70 transition-all hover:underline underline-offset-4"
+                        aria-label="Discover our methodology"
+                    >
+                        Methodology
+                    </Link>
+                    <Link
+                        href="/privacy"
+                        className="hover:text-neon-cyan active:opacity-70 transition-all hover:underline underline-offset-4"
+                        aria-label="Read our privacy policy"
+                    >
+                        Privacy
+                    </Link>
+                </nav>
+                <p className="font-medium text-text-secondary">
+                    &copy; {currentYear} <span className="neon-text-cyan">Allan Deschamps</span> & <span className="neon-text-cyan">Redbrush Agency</span>.
                 </p>
-                <p className="mt-1 text-xs opacity-50">Crafted with AI • Visual RAG Engine</p>
+                <p className="mt-2 text-xs opacity-60">Crafted with AI · Visual RAG Engine</p>
             </div>
         </footer>
     );

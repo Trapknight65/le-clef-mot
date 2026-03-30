@@ -1,67 +1,300 @@
 @import "tailwindcss";
 
+/* ============================================
+   Le Clef Mot - Neon Design System
+   ============================================ */
+
 :root {
-  --background: #0B1121;
-  /* Deepest Navy/Black */
-  --foreground: #F1F5F9;
-  /* Slate 100 */
-  --card: #151e32;
-  /* Slightly lighter blue-grey */
-  --primary: #2563EB;
-  /* Blue 600 */
-  --accent: #06B6D4;
-  /* Cyan 500 */
+  /* Neon Primary Colors */
+  --neon-yellow: #FFEB3B;
+  --neon-yellow-rgb: 255, 235, 59;
+  --neon-glow-outer: rgba(255, 235, 59, 0.35);
+  --neon-glow-inner: rgba(255, 255, 200, 0.5);
+
+  /* Background Colors */
+  --bg-navy: #0A1628;
+  --bg-midnight: #162238;
+  --bg-charcoal: #1E2D3D;
+
+  /* Accent Neons */
+  --accent-cyan: #00E5FF;
+  --accent-cyan-glow: rgba(0, 229, 255, 0.25);
+  --accent-magenta: #FF006E;
+  --accent-magenta-glow: rgba(255, 0, 110, 0.5);
+  --accent-lime: #CCFF00;
+  --accent-lime-glow: rgba(204, 255, 0, 0.5);
+
+  /* Text Colors */
+  --text-primary: #F0F4F8;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+
+  /* Spacing (8pt grid) */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 2.5rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-10: 5rem;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
+/* ============================================
+   ACCESSIBILITY UTILITIES
+   ============================================ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+
 @theme {
-  --color-etymo-bg: var(--background);
-  --color-etymo-card: var(--card);
-  --color-etymo-primary: var(--primary);
-  --color-etymo-accent: var(--accent);
-  
+  /* Tailwind Custom Colors */
+  --color-neon-yellow: var(--neon-yellow);
+  --color-neon-cyan: var(--accent-cyan);
+  --color-neon-magenta: var(--accent-magenta);
+  --color-neon-lime: var(--accent-lime);
+
+  --color-bg-navy: var(--bg-navy);
+  --color-bg-midnight: var(--bg-midnight);
+  --color-bg-charcoal: var(--bg-charcoal);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+
+  /* Animations */
+  --animate-neon-flicker: neonFlicker 4s infinite;
+  --animate-neon-pulse: neonPulse 2s ease-in-out infinite;
   --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-glow: pulseGlow 3s infinite;
+
+  @keyframes neonFlicker {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.95;
+    }
+
+    75% {
+      opacity: 0.98;
+    }
+  }
+
+  @keyframes neonPulse {
+
+    0%,
+    100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+
+    50% {
+      opacity: 0.9;
+      filter: brightness(1.2);
+    }
+  }
 
   @keyframes fadeInUp {
     from {
       opacity: 0;
       transform: translateY(20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  @keyframes pulseGlow {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-  }
 }
 
 @layer base {
   body {
-    @apply bg-slate-900 text-slate-50 antialiased;
+    @apply bg-bg-navy text-text-primary antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: radial-gradient(circle at 50% 0%, var(--bg-midnight) 0%, var(--bg-navy) 80%);
+    min-height: 100vh;
+  }
+
+  /* Smooth scrolling with reduced motion support */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer utilities {
+
+  /* Neon Text Effects */
+  .neon-text {
+    color: var(--neon-yellow);
+    text-shadow:
+      0 0 5px var(--neon-glow-inner),
+      0 0 10px var(--neon-glow-outer),
+      0 0 20px var(--neon-glow-outer),
+      0 0 40px var(--neon-glow-outer);
+  }
+
+  .neon-text-cyan {
+    color: var(--accent-cyan);
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.9),
+      0 0 10px var(--accent-cyan-glow),
+      0 0 20px var(--accent-cyan-glow),
+      0 0 40px var(--accent-cyan-glow);
+  }
+
+  .neon-text-magenta {
+    color: var(--accent-magenta);
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.9),
+      0 0 10px var(--accent-magenta-glow),
+      0 0 20px var(--accent-magenta-glow),
+      0 0 40px var(--accent-magenta-glow);
+  }
+
+  /* Neon Box Effects */
+  .neon-box {
+    border: 2px solid var(--neon-yellow);
+    box-shadow:
+      inset 0 0 10px var(--neon-glow-inner),
+      0 0 10px var(--neon-glow-outer),
+      0 0 20px var(--neon-glow-outer);
+  }
+
+  .neon-box-cyan {
+    border: 2px solid var(--accent-cyan);
+    box-shadow:
+      inset 0 0 10px rgba(255, 255, 255, 0.3),
+      0 0 10px var(--accent-cyan-glow),
+      0 0 20px var(--accent-cyan-glow);
+  }
+
+  /* Neon Button */
+  .neon-button {
+    border: 2px solid var(--neon-yellow);
+    color: var(--neon-yellow);
+    text-shadow:
+      0 0 5px var(--neon-glow-inner),
+      0 0 10px var(--neon-glow-outer),
+      0 0 20px var(--neon-glow-outer),
+      0 0 40px var(--neon-glow-outer);
+    box-shadow:
+      inset 0 0 10px var(--neon-glow-inner),
+      0 0 10px var(--neon-glow-outer),
+      0 0 20px var(--neon-glow-outer);
+
+    @apply px-6 py-3 rounded-md font-medium;
+    @apply transition-all duration-300;
+    @apply hover:scale-105 hover:brightness-110;
+    @apply active:scale-95;
+  }
+
+  .neon-button-cyan {
+    border: 2px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.9),
+      0 0 10px var(--accent-cyan-glow),
+      0 0 20px var(--accent-cyan-glow),
+      0 0 40px var(--accent-cyan-glow);
+    box-shadow:
+      inset 0 0 10px rgba(255, 255, 255, 0.3),
+      0 0 10px var(--accent-cyan-glow),
+      0 0 20px var(--accent-cyan-glow);
+
+    @apply px-6 py-3 rounded-md font-medium;
+    @apply transition-all duration-300;
+    @apply hover:scale-105 hover:brightness-110;
+    @apply active:scale-95;
+  }
+
+  /* Glass Panel with Neon Border */
+  .glass-panel {
+    @apply bg-bg-midnight/40 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+
+  .glass-panel-neon {
+    @apply bg-bg-midnight/40 backdrop-blur-md border border-white/10 shadow-xl;
+    box-shadow:
+      0 0 20px var(--neon-glow-outer),
+      inset 0 0 10px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Etymo Design System Utilities (Missing Classes) */
+  .bg-etymo-card {
+    @apply bg-bg-midnight/60 backdrop-blur-sm;
+  }
+
+  .text-etymo-accent {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 10px var(--accent-cyan-glow);
+  }
+
+  .border-etymo-accent {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan-glow);
+  }
+
+  .bg-etymo-accent {
+    background-color: var(--accent-cyan);
+    box-shadow: 0 0 15px var(--accent-cyan-glow);
+  }
+
+  .bg-etymo-primary {
+    background-color: var(--neon-yellow);
+    box-shadow: 0 0 15px var(--neon-glow-outer);
+  }
+
+  /* Text Utilities */
   .text-balance {
     text-wrap: balance;
   }
-  
-  .glass-panel {
-    @apply bg-slate-900/40 backdrop-blur-md border border-white/10 shadow-xl;
+
+  /* Hover Glow Effect */
+  .hover-glow {
+    transition: filter 0.3s ease, box-shadow 0.3s ease;
   }
-  
-  .text-glow {
-    text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+
+  .hover-glow:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 30px var(--neon-glow-outer);
+  }
+
+  /* Focus Visible (Accessibility) */
+  :focus-visible {
+    outline: 2px solid var(--neon-yellow);
+    outline-offset: 4px;
+    box-shadow: 0 0 10px var(--neon-glow-outer);
   }
 }

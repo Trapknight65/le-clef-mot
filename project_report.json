@@ -1,0 +1,172 @@
+{
+    "meta": {
+        "title": "Le Clef Mot",
+        "date": "2026-02-15",
+        "agency": "Redbrush Studio"
+    },
+    "header": {
+        "reportTitle": "MISSION REPORT: LE CLEF MOT",
+        "statusBadge": "OPERATIONAL",
+        "icon": "Zap",
+        "badgeIcon": "Rocket"
+    },
+    "overview": {
+        "heritage": {
+            "title": "Heritage & Evolution",
+            "description": "Le Clef Mot ('The Key Word') emerged from a synthesis of French linguistic heritage and modern neural illumination. The project evolved from a standard dictionary concept into a neon-noir analytical engine designed to unlock the soul of language through etymology.",
+            "items": [
+                {
+                    "label": "Origin",
+                    "text": "Initial design system centered around the fleur-de-lis and lightbulb symbology (Knowledge as Light)."
+                },
+                {
+                    "label": "Milestone",
+                    "text": "Full i18n implementation and transition to a robust Next.js 16 + AI SDK architecture."
+                }
+            ]
+        },
+        "mission": {
+            "statement": "To illuminate the deep origins of human expression through high-power neural analysis and immersive neon aesthetics.",
+            "stats": [
+                {
+                    "label": "99.9%",
+                    "subLabel": "Uptime"
+                },
+                {
+                    "label": "Stack",
+                    "subLabel": "Next.js 16"
+                }
+            ]
+        }
+    },
+    "architecture": {
+        "coreStack": [
+            {
+                "label": "Frontend",
+                "value": "Next.js 16 / React 19 / Framer Motion"
+            },
+            {
+                "label": "Backend",
+                "value": "Firebase / Pinecone DB"
+            },
+            {
+                "label": "Intelligence",
+                "value": "Vercel AI SDK / OpenAI / LangChain"
+            },
+            {
+                "label": "Styling",
+                "value": "Tailwind CSS 4 / Neon Design System"
+            }
+        ],
+        "decisions": [
+            {
+                "title": "Scalability",
+                "description": "Implementation of a serverless architecture on Vercel paired with Pinecone's vector search to handle massive linguistic datasets with O(log n) efficiency."
+            },
+            {
+                "title": "Performance",
+                "description": "Optimized the chakra flow via Next.js App Router and edge logic, ensuring low-latency retrieval of etymological data through intelligent caching patterns."
+            }
+        ]
+    },
+    "features": {
+        "items": [
+            {
+                "title": "Neural Etymology Search",
+                "icon": "Zap",
+                "points": [
+                    {
+                        "label": "Deep Root Analysis",
+                        "text": "Unlocking word origins using vector embeddings and large language models for precise semantic tracing."
+                    },
+                    {
+                        "label": "Cledor's Wisdom",
+                        "text": "AI-driven linguistic insights provided by the internal analysis engine."
+                    }
+                ]
+            },
+            {
+                "title": "Neon i18n Interface",
+                "icon": "Code",
+                "points": [
+                    {
+                        "label": "Bilingual Fluidity",
+                        "text": "Seamless English/French toggle with persistent localization via localStorage."
+                    },
+                    {
+                        "label": "Vibrant Aesthetics",
+                        "text": "A design system built on high-contrast neon glows, glass panels, and sub-second animations."
+                    }
+                ]
+            },
+            {
+                "title": "Multimedia Generation",
+                "icon": "Shield",
+                "points": [
+                    {
+                        "label": "Remotion/Fal Integration",
+                        "text": "Dynamic video and image generation pipelines for visual storytelling of word histories."
+                    }
+                ]
+            }
+        ]
+    },
+    "roadmap": {
+        "status": "Operational. System is currently deploying production-grade linguistic analysis.",
+        "performance": [
+            {
+                "title": "Edge Optimization",
+                "description": "Migrating more heavy computation to edge functions for sub-50ms global response times."
+            }
+        ],
+        "security": [
+            {
+                "title": "Audit",
+                "description": "Phase 2 system hardening and Firebase security rule optimization arc."
+            }
+        ],
+        "features": [
+            {
+                "title": "Semantic Graphs",
+                "description": "Implementing interactive visual jutsu to map the evolution of language across time and space."
+            }
+        ]
+    },
+    "deployment": {
+        "steps": [
+            {
+                "title": "Phase 1: Setup",
+                "description": "Initialization of the root Monorepo and basic Next.js scaffolding.",
+                "points": [
+                    {
+                        "text": "Configured Vercel deployment pipelines for the 'web' directory."
+                    },
+                    {
+                        "text": "Integrated Firebase Admin and client SDKs for real-time data persistence."
+                    }
+                ],
+                "notes": [
+                    {
+                        "title": "Pro-Tip",
+                        "text": "Always ensure your Firebase environment variables are locked down in .env.local before the final push to Vercel."
+                    }
+                ]
+            }
+        ]
+    },
+    "visuals": {
+        "title": "Visual Gallery",
+        "items": [
+            {
+                "type": "image",
+                "url": "/brand/le_clef_mot_logo_neon_1770421909869.png",
+                "caption": "Primary Neon Logo - Knowledge as Light."
+            },
+            {
+                "type": "image",
+                "url": "/brand/le_clef_mot_wordmark_1770422183550.png",
+                "caption": "The signature wordmark of the system."
+            }
+        ]
+    }
+}

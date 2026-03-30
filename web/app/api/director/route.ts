@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         - Scenes 2-5: The Ancient Origin (The visual root).
         - Scenes 6-9: The Twist (How the meaning changed).
         - Scenes 10-11: The Modern Connection.
-        - Scene 12: The Mnemonic & Outro.
+        - Scene 12: The Mnemonic & Outro. You MUST include a GENUINE, historically accurate canonical quote or proverb (e.g., from literature, philosophy, or antiquity) related to the word or its root concept. Use this quote in either the voiceover_script or overlay_text.
         `;
 
         const USER_PROMPT = `
